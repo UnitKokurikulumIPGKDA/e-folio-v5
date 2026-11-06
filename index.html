@@ -136,6 +136,15 @@ button{cursor:pointer;border:0}
 .toast{position:fixed;right:18px;bottom:18px;z-index:50;background:linear-gradient(135deg,#34d399,#10b981);color:#fff;padding:14px 18px;border-radius:16px;box-shadow:var(--clay-shadow);font-weight:700;max-width:340px}
 .toast.bad{background:linear-gradient(135deg,#fb7185,#f43f5e)}
 
+/* CHECKLIST */
+.checklist-card { background: var(--clay-card); border-radius: 24px; padding: 24px; box-shadow: var(--clay-shadow); margin-top: 20px; }
+.checklist-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--clay-primary); }
+.checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.checklist-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: #f8fafc; font-size: 13px; font-weight: 600; color: #475569; }
+.checklist-item.missing { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+.checklist-item.uploaded { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.check-icon { font-size: 16px; }
+
 /* RESPONSIVE */
 @media(max-width:720px){
   .topbar-inner,.main{padding-left:14px;padding-right:14px}
@@ -223,14 +232,14 @@ button{cursor:pointer;border:0}
       </div>
     </section>
 
+    <!-- TABS (Subjek Diajar dibuang) -->
     <div class="section-tabs">
-      <button data-section="PROFIL" onclick="setSection('PROFIL')">Profil</button>
-      <button data-section="KURSUS" onclick="setSection('KURSUS')">Kursus</button>
-      <button data-section="SUBJEK" onclick="setSection('SUBJEK')">Subjek diajar</button>
+      <button data-section="PROFIL" onclick="setSection('PROFIL')">Folio Pensyarah</button>
+      <button data-section="KURSUS" onclick="setSection('KURSUS')">Folio Kursus</button>
     </div>
 
     <div class="toolbar">
-      <h3 id="sectionTitle">Rekod profil</h3>
+      <h3 id="sectionTitle">Folio Pensyarah</h3>
       <div class="filters">
         <select id="yearFilter" onchange="render()"><option value="">Semua tahun</option></select>
         <input id="search" placeholder="Cari tajuk..." oninput="render()">
@@ -247,6 +256,13 @@ button{cursor:pointer;border:0}
       </table>
       <div id="empty" class="empty hidden">Belum ada rekod dalam bahagian ini.</div>
     </div>
+
+    <!-- SENARAI SEMAK (Untuk nyatakan item belum diisi) -->
+    <div class="checklist-card">
+      <div class="checklist-title">Senarai Semak: Item Belum Dimuat Naik</div>
+      <div id="checklistGrid" class="checklist-grid"></div>
+    </div>
+
   </main>
 </div>
 
@@ -319,8 +335,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz09-ZqqFPKu22lXhMFVM7A
 
 const DEFAULT_CATEGORIES = {
   PROFIL: ['PROFIL PENSYARAH','SENARAI TUGAS','SIJIL KELAYAKAN','SURAT LANTIKAN PERKHIDMATAN','SURAT PANGGILAN','SIJIL KURSUS ATAU BENGKEL','LAIN LAIN'],
-  KURSUS: ['KALENDAR AKADEMIK','JADUAL WAKTU','MAKLUMAT KURSUS','RANCANGAN SEMESTER','RANCANGAN MINGGUAN','MAKLUMAT PELAJAR','REKOD KEHADIRAN PELAJAR','JST','SOALAN TUGASAN','RUBRIK','PENTAKSIRAN','MODERASI PENTAKSIRAN','LAPORAN PENTAKSIRAN','LAIN LAIN','TUGAS TAMBAHAN','PERINCIAN ATP'],
-  SUBJEK: ['SUBJEK DIAJAR','LAIN LAIN']
+  KURSUS: ['KALENDAR AKADEMIK','JADUAL WAKTU','MAKLUMAT KURSUS','RANCANGAN SEMESTER','RANCANGAN MINGGUAN','MAKLUMAT PELAJAR','REKOD KEHADIRAN PELAJAR','JST','SOALAN TUGASAN','RUBRIK','PENTAKSIRAN','MODERASI PENTAKSIRAN','LAPORAN PENTAKSIRAN','LAIN LAIN','TUGAS TAMBAHAN','PERINCIAN ATP']
 };
 
 /* ============ STATE ============ */
@@ -467,7 +482,7 @@ async function loadRecords() {
 function setSection(s) {
   section = s;
   document.querySelectorAll('[data-section]').forEach(b => b.classList.toggle('active', b.dataset.section === s));
-  $('sectionTitle').textContent = s === 'PROFIL' ? 'Folio pensyarah' : s === 'KURSUS' ? 'Folio kursus' : 'Subjek diajar';
+  $('sectionTitle').textContent = s === 'PROFIL' ? 'Folio Pensyarah' : 'Folio Kursus';
   fillYears();
   render();
 }
@@ -486,7 +501,10 @@ function render() {
     (!year || String(r.Tahun) === year) &&
     (!q || [r.Tajuk, r.Kategori, r.Keterangan].join(' ').toLowerCase().includes(q))
   );
+  
   $('empty').classList.toggle('hidden', list.length > 0);
+  
+  // Render jadual utama
   $('recordsBody').innerHTML = list.map(r => `
     <tr>
       <td>${esc(r.Tahun)}${r.Semester ? '<div class="muted">Sem ' + esc(r.Semester) + '</div>' : ''}</td>
@@ -504,6 +522,37 @@ function render() {
       </td>
     </tr>
   `).join('');
+
+  // Render Senarai Semak
+  renderChecklist(list);
+}
+
+function renderChecklist(currentRecords) {
+  const grid = $('checklistGrid');
+  const requiredItems = categories[section] || [];
+  
+  if (!requiredItems.length) {
+    grid.innerHTML = '<div class="muted">Tiada kategori untuk disemak.</div>';
+    return;
+  }
+
+  const uploadedCategories = currentRecords.map(r => r.Kategori);
+
+  grid.innerHTML = requiredItems.map(cat => {
+    const isUploaded = uploadedCategories.includes(cat);
+    const className = isUploaded ? 'uploaded' : 'missing';
+    const icon = isUploaded ? '✅' : '❌';
+    const statusText = isUploaded ? 'Selesai' : 'Belum diisi / dimuat naik';
+    return `
+      <div class="checklist-item ${className}">
+        <span class="check-icon">${icon}</span>
+        <div>
+          <div>${esc(cat)}</div>
+          <div class="muted" style="font-size:10px;">${statusText}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 /* ============ RECORD MODAL ============ */
@@ -518,7 +567,7 @@ function openRecord(r = null) {
   const choices = (categories && categories[section] && categories[section].length ? categories[section] : DEFAULT_CATEGORIES[section]) || [];
   $('fCategory').innerHTML = choices.map(c => '<option>' + esc(c) + '</option>').join('');
   $('fCategory').value = r?.Kategori || choices[0] || '';
-  $('categoryHint').textContent = section === 'PROFIL' ? 'Kategori Folio Pensyarah' : section === 'KURSUS' ? 'Kategori Folio Kursus' : 'Kategori Subjek Diajar';
+  $('categoryHint').textContent = section === 'PROFIL' ? 'Kategori Folio Pensyarah' : 'Kategori Folio Kursus';
   $('fFile').value = '';
   $('fFileName').textContent = r?.FileName || '';
   $('recordModal').classList.remove('hidden');

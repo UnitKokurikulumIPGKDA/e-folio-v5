@@ -1,41 +1,689 @@
 <!doctype html>
 <html lang="ms">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>E-Folio Pensyarah</title>
 <style>
-:root{--navy:#0f1f3d;--blue:#2563eb;--ink:#172033;--muted:#64748b;--line:#e2e8f0;--bg:#f5f7fb;--card:#fff;--danger:#dc2626;--ok:#059669}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}.shell{min-height:100vh}.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#0b1730,#1d4ed8)}.auth-card{width:min(460px,100%);background:#fff;border-radius:28px;padding:30px;box-shadow:0 24px 80px #06112e55}.brand{text-align:center;margin-bottom:22px}.brand-mark{width:58px;height:58px;margin:auto;border-radius:18px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#2563eb,#7c3aed);font-size:28px;font-weight:900}.brand h1{margin:12px 0 4px;font-size:25px}.brand p{margin:0;color:var(--muted)}.tabs{display:flex;gap:6px;background:#f1f5f9;border-radius:13px;padding:4px;margin-bottom:20px}.tabs button{flex:1;padding:10px;border-radius:10px;background:transparent;color:var(--muted);font-weight:700}.tabs button.active{background:#fff;color:var(--blue);box-shadow:0 2px 8px #0f172a12}.field{margin:13px 0}.field label{display:block;margin:0 0 6px;font-size:12px;font-weight:800;color:#475569}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 12px;background:#fff;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px #2563eb18}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.primary,.secondary,.danger{padding:12px 16px;border-radius:11px;font-weight:800}.primary{background:var(--blue);color:#fff}.secondary{background:#eaf0ff;color:#1d4ed8}.danger{background:#fee2e2;color:var(--danger)}.full{width:100%}.notice{padding:11px 13px;border-radius:11px;background:#eff6ff;color:#1e40af;margin:12px 0}.error{background:#fef2f2;color:#b91c1c}.topbar{background:var(--navy);color:#fff;position:sticky;top:0;z-index:5}.topbar-inner{max-width:1200px;margin:auto;padding:15px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}.topbrand{font-weight:900;letter-spacing:.4px}.topbrand small{display:block;color:#a9b9d3;font-size:11px;font-weight:600;margin-top:3px}.top-actions{display:flex;gap:8px;align-items:center}.top-actions button{background:#20365f;color:#fff;padding:9px 12px;border-radius:9px;font-weight:700;font-size:12px}.top-actions button:hover{background:#31538c}.main{max-width:1200px;margin:auto;padding:24px 22px}.profile{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;align-items:center;gap:18px;margin-bottom:20px}.avatar{width:78px;height:78px;border-radius:18px;object-fit:cover;background:#dbeafe}.profile h2{margin:0 0 5px;font-size:22px}.photo-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.photo-btn{background:#2563eb;color:#fff;padding:8px 11px;border-radius:9px;font-size:12px;font-weight:800}.photo-btn:hover{background:#1d4ed8}.profile p{margin:4px 0;color:var(--muted)}.badge{display:inline-block;background:#dbeafe;color:#1d4ed8;padding:4px 8px;border-radius:99px;font-size:11px;font-weight:800}.stats{margin-left:auto;display:flex;gap:10px}.stat{background:#f8fafc;border:1px solid var(--line);padding:10px 15px;border-radius:13px;text-align:center}.stat strong{display:block;font-size:22px;color:var(--blue)}.stat span{font-size:11px;color:var(--muted)}.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}.toolbar h3{margin:0;font-size:18px}.filters{display:flex;gap:8px;flex-wrap:wrap}.filters select,.filters input{border:1px solid var(--line);border-radius:9px;background:#fff;padding:9px 10px}.section-tabs{display:flex;gap:8px;overflow:auto;margin:0 0 18px}.section-tabs button{white-space:nowrap;background:#e8eef9;color:#31517f;padding:10px 14px;border-radius:10px;font-weight:800}.section-tabs button.active{background:var(--blue);color:#fff}.table-card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:auto}.table{width:100%;border-collapse:collapse;min-width:720px}.table th{background:#f8fafc;color:#64748b;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em}.table th,.table td{padding:14px 15px;border-bottom:1px solid #eef2f7;vertical-align:middle}.table tr:last-child td{border-bottom:0}.title{font-weight:800}.muted{color:var(--muted);font-size:12px}.file-link{color:#2563eb;font-weight:800;text-decoration:none}.actions{display:flex;gap:6px}.iconbtn{padding:7px 9px;border-radius:8px;background:#eef4ff;color:#2563eb;font-weight:800}.iconbtn.del{background:#fff1f2;color:#be123c}.empty{text-align:center;padding:52px;color:var(--muted)}.modal{position:fixed;inset:0;background:#09122699;display:grid;place-items:center;padding:18px;z-index:20}.modal-card{background:#fff;border-radius:20px;padding:22px;width:min(620px,100%);max-height:92vh;overflow:auto}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.modal-head h3{margin:0}.close{background:#f1f5f9;border-radius:50%;width:32px;height:32px}.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}.upload{border:1.5px dashed #93c5fd;background:#eff6ff;border-radius:13px;padding:16px;text-align:center}.upload input{width:100%;margin-top:8px}.preview{max-width:110px;max-height:110px;border-radius:12px;margin-top:10px}.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:#0f172a;color:#fff;padding:12px 15px;border-radius:11px;box-shadow:0 10px 30px #0003}.toast.ok{background:#047857}.toast.bad{background:#b91c1c}@media(max-width:720px){.topbar-inner,.main{padding-left:14px;padding-right:14px}.topbar-inner{align-items:flex-start}.top-actions button span{display:none}.profile{align-items:flex-start;flex-wrap:wrap}.stats{width:100%;margin-left:0}.stat{flex:1}.grid2{grid-template-columns:1fr}.auth-card{padding:22px}.profile h2{font-size:19px}}
+/* ============ CLAYMORPHISM THEME ============ */
+:root{
+  --clay-bg:#eef2ff;
+  --clay-bg-2:#f5f3ff;
+  --clay-card:#ffffff;
+  --clay-primary:#6366f1;
+  --clay-primary-2:#8b5cf6;
+  --clay-accent:#f472b6;
+  --clay-ok:#34d399;
+  --clay-danger:#fb7185;
+  --clay-ink:#1e1b4b;
+  --clay-muted:#6b7280;
+  --clay-shadow: 8px 8px 20px rgba(99,102,241,.18), -6px -6px 16px rgba(255,255,255,.9);
+  --clay-shadow-sm: 4px 4px 10px rgba(99,102,241,.12), -3px -3px 8px rgba(255,255,255,.85);
+  --clay-shadow-inset: inset 4px 4px 10px rgba(99,102,241,.15), inset -4px -4px 10px rgba(255,255,255,.9);
+  --clay-shadow-press: inset 3px 3px 8px rgba(99,102,241,.2), inset -3px -3px 8px rgba(255,255,255,.8);
+  --line:#e2e8f0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(135deg,var(--clay-bg),var(--clay-bg-2));color:var(--clay-ink);font:14px Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;border:0}
+.hidden{display:none!important}
+
+/* AUTH */
+.shell{min-height:100vh}
+.auth{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(135deg,#c7d2fe,#ddd6fe)}
+.auth-card{width:min(460px,100%);background:var(--clay-card);border-radius:32px;padding:34px;box-shadow:var(--clay-shadow)}
+.brand{text-align:center;margin-bottom:22px}
+.brand-mark{width:64px;height:64px;margin:auto;border-radius:22px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,var(--clay-primary),var(--clay-primary-2));font-size:30px;font-weight:900;box-shadow:var(--clay-shadow-sm)}
+.brand h1{margin:14px 0 4px;font-size:25px}
+.brand p{margin:0;color:var(--clay-muted)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;background:#e0e7ff;border-radius:18px;padding:6px;margin-bottom:20px;box-shadow:var(--clay-shadow-inset)}
+.tabs button{flex:1;padding:11px;border-radius:14px;background:transparent;color:var(--clay-muted);font-weight:800;transition:all .2s}
+.tabs button.active{background:#fff;color:var(--clay-primary);box-shadow:var(--clay-shadow-sm)}
+
+/* FORM */
+.field{margin:13px 0}
+.field label{display:block;margin:0 0 6px;font-size:12px;font-weight:800;color:#475569}
+.field input,.field select,.field textarea{width:100%;border:none;border-radius:16px;padding:13px 15px;background:#f3f4ff;box-shadow:var(--clay-shadow-inset);outline:none;transition:all .2s}
+.field input:focus,.field select:focus,.field textarea:focus{box-shadow:var(--clay-shadow-inset),0 0 0 3px rgba(99,102,241,.25)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* BUTTONS */
+.primary,.secondary,.danger{padding:13px 20px;border-radius:16px;font-weight:800;transition:all .15s}
+.primary{background:linear-gradient(135deg,var(--clay-primary),var(--clay-primary-2));color:#fff;box-shadow:var(--clay-shadow-sm)}
+.primary:hover{transform:translateY(-1px);box-shadow:var(--clay-shadow)}
+.primary:active{box-shadow:var(--clay-shadow-press);transform:translateY(1px)}
+.primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.secondary{background:#e0e7ff;color:var(--clay-primary);box-shadow:var(--clay-shadow-sm)}
+.secondary:active{box-shadow:var(--clay-shadow-press)}
+.danger{background:#ffe4e6;color:var(--clay-danger);box-shadow:var(--clay-shadow-sm)}
+.full{width:100%}
+
+/* NOTICE */
+.notice{padding:12px 14px;border-radius:14px;background:#e0e7ff;color:var(--clay-primary);margin:12px 0;box-shadow:var(--clay-shadow-sm);font-weight:600}
+.error{background:#ffe4e6;color:var(--clay-danger)}
+
+/* TOPBAR */
+.topbar{background:linear-gradient(135deg,var(--clay-primary),var(--clay-primary-2));color:#fff;position:sticky;top:0;z-index:5;box-shadow:0 8px 24px rgba(99,102,241,.35)}
+.topbar-inner{max-width:1200px;margin:auto;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.topbrand{font-weight:900;letter-spacing:.4px}
+.topbrand small{display:block;color:#e0e7ff;font-size:11px;font-weight:600;margin-top:3px}
+.top-actions{display:flex;gap:10px;align-items:center}
+.top-actions button{background:rgba(255,255,255,.18);color:#fff;padding:10px 14px;border-radius:12px;font-weight:700;font-size:12px;box-shadow:inset 2px 2px 6px rgba(255,255,255,.2),inset -2px -2px 6px rgba(0,0,0,.1);transition:all .15s}
+.top-actions button:hover{background:rgba(255,255,255,.3)}
+
+/* MAIN */
+.main{max-width:1200px;margin:auto;padding:24px 22px}
+
+/* PROFILE CARD */
+.profile{background:var(--clay-card);border-radius:28px;padding:24px;display:flex;align-items:center;gap:18px;margin-bottom:20px;box-shadow:var(--clay-shadow)}
+.avatar{width:84px;height:84px;border-radius:24px;object-fit:cover;background:#dbeafe;box-shadow:var(--clay-shadow-sm);border:4px solid #fff}
+.profile h2{margin:0 0 5px;font-size:22px}
+.photo-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.photo-btn{background:linear-gradient(135deg,var(--clay-primary),var(--clay-primary-2));color:#fff;padding:9px 13px;border-radius:12px;font-size:12px;font-weight:800;box-shadow:var(--clay-shadow-sm)}
+.photo-btn:active{box-shadow:var(--clay-shadow-press)}
+.profile p{margin:4px 0;color:var(--clay-muted)}
+.badge{display:inline-block;background:#e0e7ff;color:var(--clay-primary);padding:5px 10px;border-radius:99px;font-size:11px;font-weight:800;box-shadow:var(--clay-shadow-sm)}
+.stats{margin-left:auto;display:flex;gap:10px}
+.stat{background:#f3f4ff;padding:12px 16px;border-radius:18px;text-align:center;box-shadow:var(--clay-shadow-inset)}
+.stat strong{display:block;font-size:22px;color:var(--clay-primary)}
+.stat span{font-size:11px;color:var(--clay-muted)}
+
+/* SECTION TABS */
+.section-tabs{display:flex;gap:10px;overflow:auto;margin:0 0 18px}
+.section-tabs button{white-space:nowrap;background:#e0e7ff;color:var(--clay-primary);padding:11px 16px;border-radius:14px;font-weight:800;box-shadow:var(--clay-shadow-sm);transition:all .15s}
+.section-tabs button.active{background:linear-gradient(135deg,var(--clay-primary),var(--clay-primary-2));color:#fff}
+.section-tabs button:active{box-shadow:var(--clay-shadow-press)}
+
+/* TOOLBAR */
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.toolbar h3{margin:0;font-size:18px}
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filters select,.filters input{border:none;border-radius:12px;background:#f3f4ff;padding:10px 13px;box-shadow:var(--clay-shadow-inset);outline:none}
+
+/* TABLE */
+.table-card{background:var(--clay-card);border-radius:24px;overflow:hidden;box-shadow:var(--clay-shadow)}
+.table{width:100%;border-collapse:collapse;min-width:720px}
+.table th{background:#eef2ff;color:var(--clay-muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.table th,.table td{padding:15px 16px;border-bottom:1px solid #eef2ff;vertical-align:middle}
+.table tr:last-child td{border-bottom:0}
+.title{font-weight:800}
+.muted{color:var(--clay-muted);font-size:12px}
+.file-link{color:var(--clay-primary);font-weight:800;text-decoration:none}
+.actions{display:flex;gap:6px}
+.iconbtn{padding:8px 12px;border-radius:12px;background:#e0e7ff;color:var(--clay-primary);font-weight:800;box-shadow:var(--clay-shadow-sm);transition:all .15s}
+.iconbtn:active{box-shadow:var(--clay-shadow-press)}
+.iconbtn.del{background:#ffe4e6;color:var(--clay-danger)}
+.empty{text-align:center;padding:52px;color:var(--clay-muted)}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(30,27,75,.45);backdrop-filter:blur(6px);display:grid;place-items:center;padding:18px;z-index:20}
+.modal-card{background:var(--clay-card);border-radius:28px;padding:26px;width:min(620px,100%);max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(30,27,75,.35),var(--clay-shadow)}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.modal-head h3{margin:0}
+.close{background:#eef2ff;color:var(--clay-ink);border-radius:50%;width:36px;height:36px;font-size:18px;box-shadow:var(--clay-shadow-sm)}
+.close:active{box-shadow:var(--clay-shadow-press)}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+
+/* UPLOAD */
+.upload{border:none;background:#eef2ff;border-radius:20px;padding:20px;text-align:center;box-shadow:var(--clay-shadow-inset)}
+.upload input{width:100%;margin-top:10px}
+.preview{max-width:120px;max-height:120px;border-radius:16px;margin-top:12px;box-shadow:var(--clay-shadow-sm);border:4px solid #fff}
+
+/* TOAST */
+.toast{position:fixed;right:18px;bottom:18px;z-index:50;background:linear-gradient(135deg,#34d399,#10b981);color:#fff;padding:14px 18px;border-radius:16px;box-shadow:var(--clay-shadow);font-weight:700;max-width:340px}
+.toast.bad{background:linear-gradient(135deg,#fb7185,#f43f5e)}
+
+/* RESPONSIVE */
+@media(max-width:720px){
+  .topbar-inner,.main{padding-left:14px;padding-right:14px}
+  .topbar-inner{align-items:flex-start}
+  .top-actions button span{display:none}
+  .profile{align-items:flex-start;flex-wrap:wrap}
+  .stats{width:100%;margin-left:0}
+  .stat{flex:1}
+  .grid2{grid-template-columns:1fr}
+  .auth-card{padding:24px}
+  .profile h2{font-size:19px}
+}
 </style>
 </head>
 <body>
-<div id="auth" class="auth"><div class="auth-card"><div class="brand"><div class="brand-mark">EF</div><h1>E-Folio Pensyarah</h1><p>Pengurusan folio digital berpusat</p></div><div class="tabs"><button id="tabLogin" class="active" onclick="authMode('login')">Log masuk</button><button id="tabRegister" onclick="authMode('register')">Daftar akaun</button></div><div id="authMsg" class="notice hidden"></div><form id="loginForm"><div class="field"><label>Emel</label><input id="loginEmail" type="email" required autocomplete="username"></div><div class="field"><label>Kata laluan</label><input id="loginPassword" type="password" required autocomplete="current-password"></div><button class="primary full">Log masuk</button></form><form id="registerForm" class="hidden"><div class="field"><label>Nama penuh</label><input id="regName" required></div><div class="field"><label>Emel rasmi</label><input id="regEmail" type="email" required></div><div class="grid2"><div class="field"><label>No. pekerja</label><input id="regStaff"></div><div class="field"><label>Gred</label><input id="regGrade"></div></div><div class="field"><label>Unit / jabatan</label><input id="regDept"></div><div class="field"><label>Kata laluan (min. 8 aksara)</label><input id="regPassword" type="password" minlength="8" required></div><div class="upload"><b>Foto pengguna</b><div class="muted">PNG, JPG atau WebP · maksimum 5 MB</div><input id="regPhoto" type="file" accept="image/png,image/jpeg,image/webp"></div><button class="primary full">Daftar & masuk</button></form></div></div>
-<div id="app" class="shell hidden"><header class="topbar"><div class="topbar-inner"><div class="topbrand">E-FOLIO PENSYARAH<small>Ruang kerja dokumen akademik</small></div><div class="top-actions"><button onclick="openProfile()">Profil</button><button onclick="logout()"><span>Log keluar</span> ↪</button></div></div></header><main class="main"><section class="profile"><div><img id="avatar" class="avatar" src="" alt="Foto"><div class="photo-actions"><button class="photo-btn" onclick="openProfile()">Muat naik foto pensyarah</button></div></div><div><span id="role" class="badge"></span><h2 id="userName"></h2><p id="userMeta"></p></div><div class="stats"><div class="stat"><strong id="countRecords">0</strong><span>Rekod</span></div><div class="stat"><strong id="countImages">0</strong><span>Gambar</span></div></div></section><div class="section-tabs"><button data-section="PROFIL" onclick="setSection('PROFIL')">Profil</button><button data-section="KURSUS" onclick="setSection('KURSUS')">Kursus</button><button data-section="SUBJEK" onclick="setSection('SUBJEK')">Subjek diajar</button></div><div class="toolbar"><h3 id="sectionTitle">Rekod profil</h3><div class="filters"><select id="yearFilter" onchange="render()"><option value="">Semua tahun</option></select><input id="search" placeholder="Cari tajuk..." oninput="render()"><button class="primary" onclick="openRecord()">+ Tambah rekod</button></div></div><div class="table-card"><table class="table"><thead><tr><th>Tahun</th><th>Kategori</th><th>Maklumat</th><th>Bahan</th><th>Tindakan</th></tr></thead><tbody id="recordsBody"></tbody></table><div id="empty" class="empty hidden">Belum ada rekod dalam bahagian ini.</div></div></main></div>
-<div id="recordModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h3 id="recordModalTitle">Tambah rekod</h3><button class="close" onclick="closeModal('recordModal')">×</button></div><form id="recordForm"><input id="recordId" type="hidden"><div class="grid2"><div class="field"><label>Tahun</label><input id="fYear" required inputmode="numeric"></div><div class="field"><label>Semester</label><select id="fSem"><option value="">Tidak berkaitan</option><option>I</option><option>II</option><option>III</option></select></div></div><div class="field"><label>Kategori</label><select id="fCategory"></select><div id="categoryHint" class="muted"></div></div><div class="field"><label>Tajuk / nama dokumen</label><input id="fTitle" required></div><div class="field"><label>Keterangan</label><textarea id="fDescription" rows="3"></textarea></div><div class="field"><label>Pautan bahan (pilihan)</label><input id="fLink" type="url" placeholder="https://..."></div><div class="upload"><b>Muat naik bahan PDF</b><div class="muted">PDF sahaja · maksimum 20 MB · disimpan dalam folder Drive pemilik</div><input id="fFile" type="file" accept="application/pdf"><div id="fFileName" class="muted"></div></div><div class="modal-foot"><button type="button" class="secondary" onclick="closeModal('recordModal')">Batal</button><button class="primary">Simpan rekod</button></div></form></div></div>
-<div id="profileModal" class="modal hidden"><div class="modal-card"><div class="modal-head"><h3>Kemaskini profil</h3><button class="close" onclick="closeModal('profileModal')">×</button></div><form id="profileForm"><div class="field"><label>Nama penuh</label><input id="pName" required></div><div class="grid2"><div class="field"><label>No. pekerja</label><input id="pStaff"></div><div class="field"><label>Gred</label><input id="pGrade"></div></div><div class="field"><label>Unit / jabatan</label><input id="pDept"></div><div class="upload"><b>Muat naik foto pensyarah</b><div class="muted">Foto ini akan dipaparkan pada profil dan disimpan dalam folder Drive pensyarah</div><input id="pFile" type="file" accept="image/png,image/jpeg,image/webp"><img id="pPreview" class="preview hidden" alt="Pratonton"></div><div class="modal-foot"><button type="button" class="secondary" onclick="closeModal('profileModal')">Batal</button><button class="primary">Simpan profil</button></div></form></div></div>
+
+<!-- ============ AUTH ============ -->
+<div id="auth" class="auth">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="brand-mark">EF</div>
+      <h1>E-Folio Pensyarah</h1>
+      <p>Pengurusan folio digital berpusat</p>
+    </div>
+    <div class="tabs">
+      <button id="tabLogin" class="active" onclick="authMode('login')">Log masuk</button>
+      <button id="tabRegister" onclick="authMode('register')">Daftar akaun</button>
+    </div>
+    <div id="authMsg" class="notice hidden"></div>
+
+    <form id="loginForm">
+      <div class="field"><label>Emel</label><input id="loginEmail" type="email" required autocomplete="username"></div>
+      <div class="field"><label>Kata laluan</label><input id="loginPassword" type="password" required autocomplete="current-password"></div>
+      <button class="primary full" id="loginBtn">Log masuk</button>
+    </form>
+
+    <form id="registerForm" class="hidden">
+      <div class="field"><label>Nama penuh</label><input id="regName" required></div>
+      <div class="field"><label>Emel rasmi</label><input id="regEmail" type="email" required></div>
+      <div class="grid2">
+        <div class="field"><label>No. pekerja</label><input id="regStaff"></div>
+        <div class="field"><label>Gred</label><input id="regGrade"></div>
+      </div>
+      <div class="field"><label>Unit / jabatan</label><input id="regDept"></div>
+      <div class="field"><label>Kata laluan (min. 8 aksara)</label><input id="regPassword" type="password" minlength="8" required></div>
+      <div class="upload">
+        <b>Foto pengguna</b>
+        <div class="muted">PNG, JPG atau WebP · maksimum 5 MB</div>
+        <input id="regPhoto" type="file" accept="image/png,image/jpeg,image/webp">
+        <img id="regPreview" class="preview hidden" alt="Pratonton foto">
+      </div>
+      <button class="primary full" id="regBtn">Daftar & masuk</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="shell hidden">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbrand">E-FOLIO PENSYARAH<small>Ruang kerja dokumen akademik</small></div>
+      <div class="top-actions">
+        <button onclick="openProfile()">Profil</button>
+        <button onclick="logout()"><span>Log keluar</span> ↪</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="profile">
+      <div>
+        <img id="avatar" class="avatar" src="" alt="Foto">
+        <div class="photo-actions">
+          <button class="photo-btn" onclick="openProfile()">Muat naik foto pensyarah</button>
+        </div>
+      </div>
+      <div>
+        <span id="role" class="badge"></span>
+        <h2 id="userName"></h2>
+        <p id="userMeta"></p>
+      </div>
+      <div class="stats">
+        <div class="stat"><strong id="countRecords">0</strong><span>Rekod</span></div>
+        <div class="stat"><strong id="countImages">0</strong><span>Gambar</span></div>
+      </div>
+    </section>
+
+    <div class="section-tabs">
+      <button data-section="PROFIL" onclick="setSection('PROFIL')">Profil</button>
+      <button data-section="KURSUS" onclick="setSection('KURSUS')">Kursus</button>
+      <button data-section="SUBJEK" onclick="setSection('SUBJEK')">Subjek diajar</button>
+    </div>
+
+    <div class="toolbar">
+      <h3 id="sectionTitle">Rekod profil</h3>
+      <div class="filters">
+        <select id="yearFilter" onchange="render()"><option value="">Semua tahun</option></select>
+        <input id="search" placeholder="Cari tajuk..." oninput="render()">
+        <button class="primary" onclick="openRecord()">+ Tambah rekod</button>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <table class="table">
+        <thead>
+          <tr><th>Tahun</th><th>Kategori</th><th>Maklumat</th><th>Bahan</th><th>Tindakan</th></tr>
+        </thead>
+        <tbody id="recordsBody"></tbody>
+      </table>
+      <div id="empty" class="empty hidden">Belum ada rekod dalam bahagian ini.</div>
+    </div>
+  </main>
+</div>
+
+<!-- ============ RECORD MODAL ============ -->
+<div id="recordModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="recordModalTitle">Tambah rekod</h3>
+      <button class="close" onclick="closeModal('recordModal')">×</button>
+    </div>
+    <form id="recordForm">
+      <input id="recordId" type="hidden">
+      <div class="grid2">
+        <div class="field"><label>Tahun</label><input id="fYear" required inputmode="numeric"></div>
+        <div class="field"><label>Semester</label>
+          <select id="fSem"><option value="">Tidak berkaitan</option><option>I</option><option>II</option><option>III</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Kategori</label><select id="fCategory"></select><div id="categoryHint" class="muted"></div></div>
+      <div class="field"><label>Tajuk / nama dokumen</label><input id="fTitle" required></div>
+      <div class="field"><label>Keterangan</label><textarea id="fDescription" rows="3"></textarea></div>
+      <div class="field"><label>Pautan bahan (pilihan)</label><input id="fLink" type="url" placeholder="https://..."></div>
+      <div class="upload">
+        <b>Muat naik bahan PDF (pilihan)</b>
+        <div class="muted">PDF sahaja · maksimum 20 MB · disimpan dalam folder Drive pemilik</div>
+        <input id="fFile" type="file" accept="application/pdf">
+        <div id="fFileName" class="muted"></div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="secondary" onclick="closeModal('recordModal')">Batal</button>
+        <button class="primary" id="recordSubmitBtn">Simpan rekod</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ PROFILE MODAL ============ -->
+<div id="profileModal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>Kemaskini profil</h3>
+      <button class="close" onclick="closeModal('profileModal')">×</button>
+    </div>
+    <form id="profileForm">
+      <div class="field"><label>Nama penuh</label><input id="pName" required></div>
+      <div class="grid2">
+        <div class="field"><label>No. pekerja</label><input id="pStaff"></div>
+        <div class="field"><label>Gred</label><input id="pGrade"></div>
+      </div>
+      <div class="field"><label>Unit / jabatan</label><input id="pDept"></div>
+      <div class="upload">
+        <b>Muat naik foto pensyarah</b>
+        <div class="muted">Foto ini akan dipaparkan pada profil dan disimpan dalam folder Drive pensyarah</div>
+        <input id="pFile" type="file" accept="image/png,image/jpeg,image/webp">
+        <img id="pPreview" class="preview hidden" alt="Pratonton">
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="secondary" onclick="closeModal('profileModal')">Batal</button>
+        <button class="primary" id="profileSubmitBtn">Simpan profil</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <div id="toast" class="toast hidden"></div>
+
 <script>
-const API_URL='https://script.google.com/macros/s/AKfycbz09-ZqqFPKu22lXhMFVM7Ay6_o_g1HqM4OJwaxbBnsswrQBWjtbtYwqbCTWBrc324/exec';const DEFAULT_CATEGORIES={PROFIL:['PROFIL PENSYARAH','SENARAI TUGAS','SIJIL KELAYAKAN','SURAT LANTIKAN PERKHIDMATAN','SURAT PANGGILAN','SIJIL KURSUS ATAU BENGKEL','LAIN LAIN'],KURSUS:['KALENDAR AKADEMIK','JADUAL WAKTU','MAKLUMAT KURSUS','RANCANGAN SEMESTER','RANCANGAN MINGGUAN','MAKLUMAT PELAJAR','REKOD KEHADIRAN PELAJAR','JST','SOALAN TUGASAN','RUBRIK','PENTAKSIRAN','MODERASI PENTAKSIRAN','LAPORAN PENTAKSIRAN','LAIN LAIN','TUGAS TAMBAHAN','PERINCIAN ATP'],SUBJEK:['SUBJEK DIAJAR','LAIN LAIN']};let token='',user=null,section='PROFIL',records=[],categories=DEFAULT_CATEGORIES;
-const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
-async function api(action,data={}){const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({action,token,...data})});const j=await r.json();if(!j.ok)throw Error(j.error||'Ralat');return j}
-function authMode(mode){$('loginForm').classList.toggle('hidden',mode!=='login');$('registerForm').classList.toggle('hidden',mode!=='register');$('tabLogin').classList.toggle('active',mode==='login');$('tabRegister').classList.toggle('active',mode==='register');$('authMsg').classList.add('hidden')}
-function showAuthMsg(t,bad=true){$('authMsg').textContent=t;$('authMsg').className='notice '+(bad?'error':'');}
-$('loginForm').onsubmit=async e=>{e.preventDefault();try{const j=await api('login',{email:$('loginEmail').value,password:$('loginPassword').value});start(j)}catch(x){showAuthMsg(x.message)}};
-$('registerForm').onsubmit=async e=>{e.preventDefault();try{const photo=await fileData($('regPhoto'));if(photo&&!/^data:image\/(png|jpeg|jpg|webp);base64/i.test(photo.dataUrl))throw Error('Foto pengguna mesti PNG, JPG atau WebP.');const j=await api('register',{email:$('regEmail').value,password:$('regPassword').value,namaPenuh:$('regName').value,noPekerja:$('regStaff').value,gred:$('regGrade').value,jabatan:$('regDept').value,photoDataUrl:photo?.dataUrl||'',photoFileName:photo?.fileName||''});start(j)}catch(x){showAuthMsg(x.message)}};
-function start(j){token=j.token;user=j.user;sessionStorage.setItem('efolio_session',JSON.stringify({token,user}));$('auth').classList.add('hidden');$('app').classList.remove('hidden');paintUser();loadBootstrap();loadRecords()}
-function paintUser(){$('userName').textContent=user.NamaPenuh||user.Email;$('userMeta').textContent=[user.Email,user.NoPekerja,user.Gred,user.Jabatan].filter(Boolean).join(' · ');$('role').textContent=user.Role;$('avatar').src=user.FotoUrl||'https://ui-avatars.com/api/?name='+encodeURIComponent(user.NamaPenuh||'P');}
-async function loadBootstrap(){try{const j=await api('bootstrap');categories=(j.categories&&!Array.isArray(j.categories)&&j.categories.PROFIL)?j.categories:DEFAULT_CATEGORIES;$('countRecords').textContent=j.stats.records;$('countImages').textContent=j.stats.images}catch(x){toast(x.message,true)}}
-async function loadRecords(){try{const j=await api('listRecords');records=j.records||[];fillYears();render()}catch(x){toast(x.message,true)}}
-function setSection(s){section=s;document.querySelectorAll('[data-section]').forEach(b=>b.classList.toggle('active',b.dataset.section===s));$('sectionTitle').textContent=s==='PROFIL'?'Folio pensyarah':s==='KURSUS'?'Folio kursus':'Subjek diajar';fillYears();render()}
-function fillYears(){const ys=[...new Set(records.filter(r=>r.Section===section).map(r=>r.Tahun).filter(Boolean))].sort().reverse();$('yearFilter').innerHTML='<option value="">Semua tahun</option>'+ys.map(y=>'<option>'+esc(y)+'</option>').join('')}
-function render(){const year=$('yearFilter').value,q=$('search').value.toLowerCase();let list=records.filter(r=>r.Section===section&&(!year||String(r.Tahun)===year)&&(!q||[r.Tajuk,r.Kategori,r.Keterangan].join(' ').toLowerCase().includes(q)));$('empty').classList.toggle('hidden',list.length>0);$('recordsBody').innerHTML=list.map(r=>`<tr><td>${esc(r.Tahun)}${r.Semester?'<div class="muted">Sem '+esc(r.Semester)+'</div>':''}</td><td><span class="badge">${esc(r.Kategori||'-')}</span></td><td><div class="title">${esc(r.Tajuk)}</div><div class="muted">${esc(r.Keterangan||'')}</div>${user.Role==='Admin'?'<div class="muted">Pemilik: '+esc(r.OwnerEmail)+'</div>':''}</td><td>${r.FileUrl?'<a class="file-link" target="_blank" href="'+esc(r.FileUrl)+'">'+(r.FileMimeType==='application/pdf'?'Buka PDF':'Buka pautan')+'</a>':'<span class="muted">Tiada bahan</span>'}</td><td><div class="actions"><button class="iconbtn" onclick="openRecord('+JSON.stringify(r).replace(/"/g,'&quot;')+')">Edit</button><button class="iconbtn del" onclick="removeRecord(\''+esc(r.RecordId)+'\')">Padam</button></div></td></tr>`).join('')}
-function openRecord(r=null){$('recordModalTitle').textContent=r?'Kemaskini rekod':'Tambah rekod';$('recordId').value=r?.RecordId||'';$('fYear').value=r?.Tahun||new Date().getFullYear();$('fSem').value=r?.Semester||'';$('fTitle').value=r?.Tajuk||'';$('fDescription').value=r?.Keterangan||'';$('fLink').value=r?.FileUrl&&r?.FileMimeType!=='application/pdf'?r.FileUrl:'';const choices=(categories&&categories[section]&&categories[section].length?categories[section]:DEFAULT_CATEGORIES[section])||[];$('fCategory').innerHTML=choices.map(c=>'<option>'+esc(c)+'</option>').join('');$('fCategory').value=r?.Kategori||choices[0]||'';$('categoryHint').textContent=section==='PROFIL'?'Kategori Folio Pensyarah':section==='KURSUS'?'Kategori Folio Kursus':'Kategori Subjek Diajar';$('fFile').value='';$('fFileName').textContent=r?.FileName||'';$('recordModal').classList.remove('hidden')}
-$('fFile').onchange=e=>{$('fFileName').textContent=e.target.files[0]?.name||''};$('pFile').onchange=e=>preview(e.target,$('pPreview'));$('regPhoto').onchange=e=>{};function preview(input,img){const f=input.files[0];if(f){img.src=URL.createObjectURL(f);img.classList.remove('hidden')}}
-async function fileData(input){const f=input.files[0];if(!f)return null;return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>ok({dataUrl:r.result,fileName:f.name});r.onerror=no;r.readAsDataURL(f)})}
-$('recordForm').onsubmit=async e=>{e.preventDefault();try{let file=await fileData($('fFile'));if(file){const f=$('fFile').files[0];if(f.type!=='application/pdf')throw Error('Bahan mesti dalam format PDF.');const u=await api('uploadMaterial',file);file={fileId:u.fileId,fileUrl:u.fileUrl,fileName:u.fileName,fileMimeType:'application/pdf'}}else if($('fLink').value.trim()){file={fileUrl:$('fLink').value.trim(),fileName:'Pautan bahan',fileMimeType:'text/link'}}await api('saveRecord',{recordId:$('recordId').value,section,tahun:$('fYear').value,semester:$('fSem').value,kategori:$('fCategory').value,tajuk:$('fTitle').value,keterangan:$('fDescription').value,...(file||{})});closeModal('recordModal');await loadRecords();loadBootstrap();toast('Rekod bahan berjaya disimpan.')}catch(x){toast(x.message,true)}};
-async function removeRecord(id){if(!confirm('Padam rekod ini?'))return;try{await api('deleteRecord',{recordId:id});await loadRecords();loadBootstrap();toast('Rekod dipadam.')}catch(x){toast(x.message,true)}}
-function openProfile(){$('pName').value=user.NamaPenuh||'';$('pStaff').value=user.NoPekerja||'';$('pGrade').value=user.Gred||'';$('pDept').value=user.Jabatan||'';$('pFile').value='';$('pPreview').classList.add('hidden');$('profileModal').classList.remove('hidden')}
-$('profileForm').onsubmit=async e=>{e.preventDefault();try{let photo=user.FotoUrl;let f=await fileData($('pFile'));if(f){const u=await api('uploadImage',f);photo=u.fileUrl}const j=await api('updateProfile',{namaPenuh:$('pName').value,noPekerja:$('pStaff').value,gred:$('pGrade').value,jabatan:$('pDept').value,fotoUrl:photo});user=j.user;sessionStorage.setItem('efolio_session',JSON.stringify({token,user}));paintUser();closeModal('profileModal');toast('Profil berjaya dikemaskini.')}catch(x){toast(x.message,true)}};
-function closeModal(id){$(id).classList.add('hidden')}function toast(t,bad=false){$('toast').textContent=t;$('toast').className='toast '+(bad?'bad':'ok');setTimeout(()=>$('toast').classList.add('hidden'),3200)}async function logout(){try{await api('logout')}catch(x){}sessionStorage.removeItem('efolio_session');location.reload()}
-(function(){const s=sessionStorage.getItem('efolio_session');if(s){try{const j=JSON.parse(s);token=j.token;user=j.user;$('auth').classList.add('hidden');$('app').classList.remove('hidden');paintUser();loadBootstrap();loadRecords()}catch(x){sessionStorage.clear()}}setSection('PROFIL')})();
+/* ============ CONFIG ============ */
+const API_URL = 'https://script.google.com/macros/s/AKfycbz09-ZqqFPKu22lXhMFVM7Ay6_o_g1HqM4OJwaxbBnsswrQBWjtbtYwqbCTWBrc324/exec';
+
+const DEFAULT_CATEGORIES = {
+  PROFIL: ['PROFIL PENSYARAH','SENARAI TUGAS','SIJIL KELAYAKAN','SURAT LANTIKAN PERKHIDMATAN','SURAT PANGGILAN','SIJIL KURSUS ATAU BENGKEL','LAIN LAIN'],
+  KURSUS: ['KALENDAR AKADEMIK','JADUAL WAKTU','MAKLUMAT KURSUS','RANCANGAN SEMESTER','RANCANGAN MINGGUAN','MAKLUMAT PELAJAR','REKOD KEHADIRAN PELAJAR','JST','SOALAN TUGASAN','RUBRIK','PENTAKSIRAN','MODERASI PENTAKSIRAN','LAPORAN PENTAKSIRAN','LAIN LAIN','TUGAS TAMBAHAN','PERINCIAN ATP'],
+  SUBJEK: ['SUBJEK DIAJAR','LAIN LAIN']
+};
+
+/* ============ STATE ============ */
+let token = '', user = null, section = 'PROFIL', records = [], categories = DEFAULT_CATEGORIES;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+
+/* ============ API ============ */
+async function api(action, data = {}) {
+  try {
+    const r = await fetch(API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, token, ...data })
+    });
+    const j = await r.json();
+    if (!j.ok) {
+      if (j.code === 'SESSION_INVALID' || j.error === 'SESSION_INVALID') {
+        sessionStorage.removeItem('efolio_session');
+        toast('Sesi tamat. Sila log masuk semula.', true);
+        setTimeout(() => location.reload(), 1200);
+        return;
+      }
+      throw Error(j.error || 'Ralat tidak diketahui');
+    }
+    return j;
+  } catch (err) {
+    console.error('[api]', action, err);
+    throw err;
+  }
+}
+
+/* ============ AUTH UI ============ */
+function authMode(mode) {
+  $('loginForm').classList.toggle('hidden', mode !== 'login');
+  $('registerForm').classList.toggle('hidden', mode !== 'register');
+  $('tabLogin').classList.toggle('active', mode === 'login');
+  $('tabRegister').classList.toggle('active', mode === 'register');
+  $('authMsg').classList.add('hidden');
+}
+function showAuthMsg(t, bad = true) {
+  $('authMsg').textContent = t;
+  $('authMsg').className = 'notice ' + (bad ? 'error' : '');
+}
+
+/* ============ LOGIN ============ */
+$('loginForm').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('loginBtn');
+  const original = btn.textContent;
+  try {
+    btn.disabled = true; btn.textContent = 'Memproses...';
+    const j = await api('login', { email: $('loginEmail').value, password: $('loginPassword').value });
+    start(j);
+  } catch (x) {
+    showAuthMsg(x.message);
+  } finally {
+    btn.disabled = false; btn.textContent = original;
+  }
+};
+
+/* ============ REGISTER ============ */
+$('regPhoto').onchange = e => {
+  const f = e.target.files[0];
+  const img = $('regPreview');
+  if (!f) { img.classList.add('hidden'); return; }
+  if (!/^image\/(png|jpeg|webp)$/i.test(f.type)) {
+    toast('Foto mesti PNG, JPG atau WebP.', true);
+    e.target.value = ''; img.classList.add('hidden'); return;
+  }
+  if (f.size > 5 * 1024 * 1024) {
+    toast('Saiz foto maksimum 5 MB.', true);
+    e.target.value = ''; img.classList.add('hidden'); return;
+  }
+  img.src = URL.createObjectURL(f);
+  img.classList.remove('hidden');
+};
+
+$('registerForm').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('regBtn');
+  const original = btn.textContent;
+  try {
+    btn.disabled = true; btn.textContent = 'Mendaftar...';
+    const photo = await fileData($('regPhoto'), 5);
+    if (photo && !/^data:image\/(png|jpeg|jpg|webp);base64/i.test(photo.dataUrl)) throw Error('Foto pengguna mesti PNG, JPG atau WebP.');
+    const j = await api('register', {
+      email: $('regEmail').value,
+      password: $('regPassword').value,
+      namaPenuh: $('regName').value,
+      noPekerja: $('regStaff').value,
+      gred: $('regGrade').value,
+      jabatan: $('regDept').value,
+      photoDataUrl: photo?.dataUrl || '',
+      photoFileName: photo?.fileName || ''
+    });
+    start(j);
+  } catch (x) {
+    showAuthMsg(x.message);
+  } finally {
+    btn.disabled = false; btn.textContent = original;
+  }
+};
+
+/* ============ START & PAINT ============ */
+async function start(j) {
+  token = j.token;
+  user = j.user;
+  sessionStorage.setItem('efolio_session', JSON.stringify({ token, user }));
+  $('auth').classList.add('hidden');
+  $('app').classList.remove('hidden');
+  paintUser();
+  await loadBootstrap();
+  await loadRecords();
+}
+
+function paintUser() {
+  if (!user) return;
+  $('userName').textContent = user.NamaPenuh || user.Email || 'Pengguna';
+  $('userMeta').textContent = [user.Email, user.NoPekerja, user.Gred, user.Jabatan].filter(Boolean).join(' · ');
+  $('role').textContent = user.Role || 'Pensyarah';
+  $('avatar').src = user.FotoUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.NamaPenuh || 'P') + '&background=6366f1&color=fff&size=160';
+}
+
+async function loadBootstrap() {
+  try {
+    const j = await api('bootstrap');
+    categories = (j.categories && !Array.isArray(j.categories) && j.categories.PROFIL) ? j.categories : DEFAULT_CATEGORIES;
+    $('countRecords').textContent = j.stats.records;
+    $('countImages').textContent = j.stats.images;
+  } catch (x) { toast(x.message, true); }
+}
+
+async function loadRecords() {
+  try {
+    const j = await api('listRecords');
+    records = j.records || [];
+    fillYears();
+    render();
+  } catch (x) { toast(x.message, true); }
+}
+
+/* ============ SECTION ============ */
+function setSection(s) {
+  section = s;
+  document.querySelectorAll('[data-section]').forEach(b => b.classList.toggle('active', b.dataset.section === s));
+  $('sectionTitle').textContent = s === 'PROFIL' ? 'Folio pensyarah' : s === 'KURSUS' ? 'Folio kursus' : 'Subjek diajar';
+  fillYears();
+  render();
+}
+
+function fillYears() {
+  const ys = [...new Set(records.filter(r => r.Section === section).map(r => r.Tahun).filter(Boolean))].sort().reverse();
+  $('yearFilter').innerHTML = '<option value="">Semua tahun</option>' + ys.map(y => '<option>' + esc(y) + '</option>').join('');
+}
+
+/* ============ RENDER ============ */
+function render() {
+  const year = $('yearFilter').value;
+  const q = $('search').value.toLowerCase();
+  const list = records.filter(r =>
+    r.Section === section &&
+    (!year || String(r.Tahun) === year) &&
+    (!q || [r.Tajuk, r.Kategori, r.Keterangan].join(' ').toLowerCase().includes(q))
+  );
+  $('empty').classList.toggle('hidden', list.length > 0);
+  $('recordsBody').innerHTML = list.map(r => `
+    <tr>
+      <td>${esc(r.Tahun)}${r.Semester ? '<div class="muted">Sem ' + esc(r.Semester) + '</div>' : ''}</td>
+      <td><span class="badge">${esc(r.Kategori || '-')}</span></td>
+      <td>
+        <div class="title">${esc(r.Tajuk)}</div>
+        <div class="muted">${esc(r.Keterangan || '')}</div>
+        ${user.Role === 'Admin' ? '<div class="muted">Pemilik: ' + esc(r.OwnerEmail) + '</div>' : ''}
+      </td>
+      <td>${r.FileUrl ? '<a class="file-link" target="_blank" rel="noopener" href="' + esc(r.FileUrl) + '">' + (r.FileMimeType === 'application/pdf' ? 'Buka PDF' : 'Buka pautan') + '</a>' : '<span class="muted">Tiada bahan</span>'}</td>
+      <td>
+        <div class="actions">
+          <button class="iconbtn" onclick='openRecord(${JSON.stringify(r).replace(/"/g, '&quot;')})'>Edit</button>
+          <button class="iconbtn del" onclick="removeRecord('${esc(r.RecordId)}')">Padam</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+/* ============ RECORD MODAL ============ */
+function openRecord(r = null) {
+  $('recordModalTitle').textContent = r ? 'Kemaskini rekod' : 'Tambah rekod';
+  $('recordId').value = r?.RecordId || '';
+  $('fYear').value = r?.Tahun || new Date().getFullYear();
+  $('fSem').value = r?.Semester || '';
+  $('fTitle').value = r?.Tajuk || '';
+  $('fDescription').value = r?.Keterangan || '';
+  $('fLink').value = (r?.FileUrl && r?.FileMimeType !== 'application/pdf') ? r.FileUrl : '';
+  const choices = (categories && categories[section] && categories[section].length ? categories[section] : DEFAULT_CATEGORIES[section]) || [];
+  $('fCategory').innerHTML = choices.map(c => '<option>' + esc(c) + '</option>').join('');
+  $('fCategory').value = r?.Kategori || choices[0] || '';
+  $('categoryHint').textContent = section === 'PROFIL' ? 'Kategori Folio Pensyarah' : section === 'KURSUS' ? 'Kategori Folio Kursus' : 'Kategori Subjek Diajar';
+  $('fFile').value = '';
+  $('fFileName').textContent = r?.FileName || '';
+  $('recordModal').classList.remove('hidden');
+}
+
+$('fFile').onchange = e => {
+  $('fFileName').textContent = e.target.files[0]?.name || '';
+};
+
+/* ============ FILE HELPERS ============ */
+async function fileData(input, maxMB = 20) {
+  const f = input.files[0];
+  if (!f) return null;
+  if (f.size > maxMB * 1024 * 1024) throw new Error('Saiz fail melebihi ' + maxMB + ' MB.');
+  return new Promise((ok, no) => {
+    const r = new FileReader();
+    r.onload = () => ok({ dataUrl: r.result, fileName: f.name });
+    r.onerror = () => no(new Error('Gagal membaca fail.'));
+    r.readAsDataURL(f);
+  });
+}
+
+function preview(input, img) {
+  const f = input.files[0];
+  if (f) {
+    img.src = URL.createObjectURL(f);
+    img.classList.remove('hidden');
+  }
+}
+
+/* ============ RECORD SUBMIT (FIXED) ============ */
+$('recordForm').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('recordSubmitBtn');
+  const original = btn.textContent;
+  try {
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+
+    let file = null;
+    const fileInput = $('fFile');
+
+    if (fileInput.files[0]) {
+      const f = fileInput.files[0];
+      if (f.type !== 'application/pdf') throw new Error('Bahan mesti dalam format PDF.');
+      if (f.size > 20 * 1024 * 1024) throw new Error('Saiz PDF maksimum 20 MB.');
+      const data = await fileData(fileInput, 20);
+      const u = await api('uploadMaterial', data);
+      file = { fileId: u.fileId, fileUrl: u.fileUrl, fileName: u.fileName, fileMimeType: 'application/pdf' };
+    } else if ($('fLink').value.trim()) {
+      file = { fileUrl: $('fLink').value.trim(), fileName: 'Pautan bahan', fileMimeType: 'text/link' };
+    }
+
+    await api('saveRecord', {
+      recordId: $('recordId').value,
+      section,
+      tahun: $('fYear').value,
+      semester: $('fSem').value,
+      kategori: $('fCategory').value,
+      tajuk: $('fTitle').value,
+      keterangan: $('fDescription').value,
+      ...(file || {})
+    });
+
+    closeModal('recordModal');
+    await loadRecords();
+    await loadBootstrap();
+    toast('Rekod berjaya disimpan.');
+  } catch (x) {
+    console.error('[recordForm]', x);
+    toast(x.message || 'Ralat menyimpan rekod.', true);
+  } finally {
+    btn.disabled = false; btn.textContent = original;
+  }
+};
+
+/* ============ DELETE ============ */
+async function removeRecord(id) {
+  if (!confirm('Padam rekod ini?')) return;
+  try {
+    await api('deleteRecord', { recordId: id });
+    await loadRecords();
+    await loadBootstrap();
+    toast('Rekod dipadam.');
+  } catch (x) { toast(x.message, true); }
+}
+
+/* ============ PROFILE ============ */
+function openProfile() {
+  $('pName').value = user.NamaPenuh || '';
+  $('pStaff').value = user.NoPekerja || '';
+  $('pGrade').value = user.Gred || '';
+  $('pDept').value = user.Jabatan || '';
+  $('pFile').value = '';
+  $('pPreview').classList.add('hidden');
+  $('profileModal').classList.remove('hidden');
+}
+
+$('pFile').onchange = e => preview(e.target, $('pPreview'));
+
+$('profileForm').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('profileSubmitBtn');
+  const original = btn.textContent;
+  try {
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    let photo = user.FotoUrl;
+    const f = await fileData($('pFile'), 5);
+    if (f) {
+      if (!/^data:image\/(png|jpeg|jpg|webp);base64/i.test(f.dataUrl)) throw new Error('Foto mesti PNG, JPG atau WebP.');
+      const u = await api('uploadImage', f);
+      photo = u.fileUrl;
+    }
+    const j = await api('updateProfile', {
+      namaPenuh: $('pName').value,
+      noPekerja: $('pStaff').value,
+      gred: $('pGrade').value,
+      jabatan: $('pDept').value,
+      fotoUrl: photo
+    });
+    user = j.user;
+    sessionStorage.setItem('efolio_session', JSON.stringify({ token, user }));
+    paintUser();
+    closeModal('profileModal');
+    toast('Profil berjaya dikemaskini.');
+  } catch (x) {
+    console.error('[profileForm]', x);
+    toast(x.message, true);
+  } finally {
+    btn.disabled = false; btn.textContent = original;
+  }
+};
+
+/* ============ UTIL UI ============ */
+function closeModal(id) { $(id).classList.add('hidden'); }
+function toast(t, bad = false) {
+  const el = $('toast');
+  el.textContent = t;
+  el.className = 'toast ' + (bad ? 'bad' : '');
+  el.classList.remove('hidden');
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.add('hidden'), 3200);
+}
+async function logout() {
+  try { await api('logout'); } catch (x) {}
+  sessionStorage.removeItem('efolio_session');
+  location.reload();
+}
+
+/* ============ BOOT ============ */
+(function () {
+  const s = sessionStorage.getItem('efolio_session');
+  if (s) {
+    try {
+      const j = JSON.parse(s);
+      token = j.token; user = j.user;
+      $('auth').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      paintUser();
+      loadBootstrap();
+      loadRecords();
+    } catch (x) { sessionStorage.clear(); }
+  }
+  setSection('PROFIL');
+})();
 </script>
-</body></html>
+</body>
+</html>

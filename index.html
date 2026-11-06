@@ -494,7 +494,6 @@ function render() {
       <td>
         <div class="title">${esc(r.Tajuk)}</div>
         <div class="muted">${esc(r.Keterangan || '')}</div>
-        ${user.Role === 'Admin' ? '<div class="muted">Pemilik: ' + esc(r.OwnerEmail) + '</div>' : ''}
       </td>
       <td>${r.FileUrl ? '<a class="file-link" target="_blank" rel="noopener" href="' + esc(r.FileUrl) + '">' + (r.FileMimeType === 'application/pdf' ? 'Buka PDF' : 'Buka pautan') + '</a>' : '<span class="muted">Tiada bahan</span>'}</td>
       <td>

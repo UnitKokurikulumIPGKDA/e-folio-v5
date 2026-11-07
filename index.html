@@ -60,6 +60,7 @@ button{cursor:pointer;border:0}
 .secondary:active{box-shadow:var(--clay-shadow-press)}
 .danger{background:#ffe4e6;color:var(--clay-danger);box-shadow:var(--clay-shadow-sm)}
 .full{width:100%}
+.sm-btn { padding: 6px 10px; font-size: 11px; border-radius: 8px; }
 
 /* NOTICE */
 .notice{padding:12px 14px;border-radius:14px;background:#e0e7ff;color:var(--clay-primary);margin:12px 0;box-shadow:var(--clay-shadow-sm);font-weight:600}
@@ -104,7 +105,7 @@ button{cursor:pointer;border:0}
 .filters select,.filters input{border:none;border-radius:12px;background:#f3f4ff;padding:10px 13px;box-shadow:var(--clay-shadow-inset);outline:none}
 
 /* TABLE */
-.table-card{background:var(--clay-card);border-radius:24px;overflow:hidden;box-shadow:var(--clay-shadow)}
+.table-card{background:var(--clay-card);border-radius:24px;overflow:hidden;box-shadow:var(--clay-shadow);margin-bottom: 20px;}
 .table{width:100%;border-collapse:collapse;min-width:720px}
 .table th{background:#eef2ff;color:var(--clay-muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
 .table th,.table td{padding:15px 16px;border-bottom:1px solid #eef2ff;vertical-align:middle}
@@ -136,14 +137,15 @@ button{cursor:pointer;border:0}
 .toast{position:fixed;right:18px;bottom:18px;z-index:50;background:linear-gradient(135deg,#34d399,#10b981);color:#fff;padding:14px 18px;border-radius:16px;box-shadow:var(--clay-shadow);font-weight:700;max-width:340px}
 .toast.bad{background:linear-gradient(135deg,#fb7185,#f43f5e)}
 
-/* CHECKLIST */
-.checklist-card { background: var(--clay-card); border-radius: 24px; padding: 24px; box-shadow: var(--clay-shadow); margin-top: 20px; }
-.checklist-title { font-size: 16px; font-weight: 800; margin-bottom: 16px; color: var(--clay-primary); }
-.checklist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
-.checklist-item { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: #f8fafc; font-size: 13px; font-weight: 600; color: #475569; }
-.checklist-item.missing { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
-.checklist-item.uploaded { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
-.check-icon { font-size: 16px; }
+/* CHECKLIST TABLE */
+.checklist-table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 16px; overflow: hidden; }
+.checklist-table th { background: #f3f4ff; color: var(--clay-primary); padding: 12px; text-align: left; font-size: 12px; }
+.checklist-table td { padding: 12px; border-bottom: 1px solid #eef2ff; font-size: 13px; }
+.checklist-table tr:last-child td { border-bottom: 0; }
+.status-badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-weight: 800; font-size: 11px; text-align: center; min-width: 80px; }
+.status-ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.status-empty { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+.status-na { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 
 /* RESPONSIVE */
 @media(max-width:720px){
@@ -232,35 +234,47 @@ button{cursor:pointer;border:0}
       </div>
     </section>
 
-    <!-- TABS (Subjek Diajar dibuang) -->
+    <!-- TABS -->
     <div class="section-tabs">
       <button data-section="PROFIL" onclick="setSection('PROFIL')">Folio Pensyarah</button>
       <button data-section="KURSUS" onclick="setSection('KURSUS')">Folio Kursus</button>
+      <button data-section="SEMAK" onclick="setSection('SEMAK')">Senarai Semak Audit</button>
     </div>
 
-    <div class="toolbar">
-      <h3 id="sectionTitle">Folio Pensyarah</h3>
-      <div class="filters">
-        <select id="yearFilter" onchange="render()"><option value="">Semua tahun</option></select>
-        <input id="search" placeholder="Cari tajuk..." oninput="render()">
-        <button class="primary" onclick="openRecord()">+ Tambah rekod</button>
+    <!-- KAWASAN JADUAL (Disembunyikan jika tab SEMAK dipilih) -->
+    <div id="contentTable">
+      <div class="toolbar">
+        <h3 id="sectionTitle">Folio Pensyarah</h3>
+        <div class="filters">
+          <select id="yearFilter" onchange="render()"><option value="">Semua tahun</option></select>
+          <input id="search" placeholder="Cari tajuk..." oninput="render()">
+          <button class="primary" onclick="openRecord()">+ Tambah rekod</button>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <table class="table">
+          <thead>
+            <tr><th>Tahun</th><th>Kategori</th><th>Maklumat</th><th>Bahan</th><th>Tindakan</th></tr>
+          </thead>
+          <tbody id="recordsBody"></tbody>
+        </table>
+        <div id="empty" class="empty hidden">Belum ada rekod dalam bahagian ini.</div>
       </div>
     </div>
 
-    <div class="table-card">
-      <table class="table">
-        <thead>
-          <tr><th>Tahun</th><th>Kategori</th><th>Maklumat</th><th>Bahan</th><th>Tindakan</th></tr>
-        </thead>
-        <tbody id="recordsBody"></tbody>
-      </table>
-      <div id="empty" class="empty hidden">Belum ada rekod dalam bahagian ini.</div>
-    </div>
-
-    <!-- SENARAI SEMAK (Untuk nyatakan item belum diisi) -->
-    <div class="checklist-card">
-      <div class="checklist-title">Senarai Semak: Item Belum Dimuat Naik</div>
-      <div id="checklistGrid" class="checklist-grid"></div>
+    <!-- KAWASAN SENARAI SEMAK AUDIT -->
+    <div id="contentSemak" class="hidden">
+      <div class="toolbar">
+        <h3>Senarai Semak Audit (Format PDF 2025)</h3>
+      </div>
+      <div class="table-card">
+        <div style="padding: 20px;">
+          <table class="checklist-table" id="auditTable">
+            <!-- Content will be injected via JS -->
+          </table>
+        </div>
+      </div>
     </div>
 
   </main>
@@ -334,12 +348,39 @@ button{cursor:pointer;border:0}
 const API_URL = 'https://script.google.com/macros/s/AKfycbz09-ZqqFPKu22lXhMFVM7Ay6_o_g1HqM4OJwaxbBnsswrQBWjtbtYwqbCTWBrc324/exec';
 
 const DEFAULT_CATEGORIES = {
-  PROFIL: ['PROFIL PENSYARAH','SENARAI TUGAS','SIJIL KELAYAKAN','SURAT LANTIKAN PERKHIDMATAN','SURAT PANGGILAN','SIJIL KURSUS ATAU BENGKEL','LAIN LAIN'],
-  KURSUS: ['KALENDAR AKADEMIK','JADUAL WAKTU','MAKLUMAT KURSUS','RANCANGAN SEMESTER','RANCANGAN MINGGUAN','MAKLUMAT PELAJAR','REKOD KEHADIRAN PELAJAR','JST','SOALAN TUGASAN','RUBRIK','PENTAKSIRAN','MODERASI PENTAKSIRAN','LAPORAN PENTAKSIRAN','LAIN LAIN','TUGAS TAMBAHAN','PERINCIAN ATP']
+  PROFIL: ['Curriculum Vitae','Senarai Tugas','Sijil Kelayakan Akademik / Ikhtisas','Surat Lantikan Perkhidmatan','Rekod / Sijil Kursus / Bengkel','Surat Panggilan Mesyuarat','LAIN LAIN'],
+  KURSUS: ['Senarai Semak KJ/KU PK1','Kalendar Akademik','Jadual Waktu (ATP)','Ringkasan Maklumat Kursus (RMK)','Induksi Kursus','Rancangan Pengajaran Semester (LAM-PT-03-01)','Rancangan Pengajaran Mingguan (LAM-PT-03-02)','Maklumat Pelajar','Rekod Kehadiran Pelajar','Rekod Pentaksiran Pelajar (JST/Rubrik/JSU)','Rekod Taklimat Pentaksiran','Borang LAM-PT-04-01','Bahan PdP','LAIN LAIN']
+};
+
+// Senarai semak berdasarkan PDF 2025
+const AUDIT_CHECKLIST = {
+  PROFIL: [
+    'Curriculum Vitae', 
+    'Senarai Tugas', 
+    'Sijil Kelayakan Akademik / Ikhtisas', 
+    'Surat Lantikan Perkhidmatan', 
+    'Rekod / Sijil Kursus / Bengkel', 
+    'Surat Panggilan Mesyuarat'
+  ],
+  KURSUS: [
+    'Senarai Semak KJ/KU PK1',
+    'Kalendar Akademik',
+    'Jadual Waktu (ATP)',
+    'Ringkasan Maklumat Kursus (RMK)',
+    'Induksi Kursus',
+    'Rancangan Pengajaran Semester (LAM-PT-03-01)',
+    'Rancangan Pengajaran Mingguan (LAM-PT-03-02)',
+    'Maklumat Pelajar',
+    'Rekod Kehadiran Pelajar',
+    'Rekod Pentaksiran Pelajar (JST/Rubrik/JSU)',
+    'Rekod Taklimat Pentaksiran',
+    'Borang LAM-PT-04-01',
+    'Bahan PdP'
+  ]
 };
 
 /* ============ STATE ============ */
-let token = '', user = null, section = 'PROFIL', records = [], categories = DEFAULT_CATEGORIES;
+let token = '', user = null, section = 'PROFIL', records = [], checklistStatus = {}, categories = DEFAULT_CATEGORIES;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -473,18 +514,28 @@ async function loadRecords() {
   try {
     const j = await api('listRecords');
     records = j.records || [];
+    checklistStatus = j.checklist || {};
     fillYears();
     render();
   } catch (x) { toast(x.message, true); }
 }
 
-/* ============ SECTION ============ */
+/* ============ SECTION & RENDER ============ */
 function setSection(s) {
   section = s;
   document.querySelectorAll('[data-section]').forEach(b => b.classList.toggle('active', b.dataset.section === s));
-  $('sectionTitle').textContent = s === 'PROFIL' ? 'Folio Pensyarah' : 'Folio Kursus';
-  fillYears();
-  render();
+  
+  if (s === 'SEMAK') {
+    $('contentTable').classList.add('hidden');
+    $('contentSemak').classList.remove('hidden');
+    renderAuditChecklist();
+  } else {
+    $('contentTable').classList.remove('hidden');
+    $('contentSemak').classList.add('hidden');
+    $('sectionTitle').textContent = s === 'PROFIL' ? 'Folio Pensyarah' : 'Folio Kursus';
+    fillYears();
+    render();
+  }
 }
 
 function fillYears() {
@@ -492,7 +543,6 @@ function fillYears() {
   $('yearFilter').innerHTML = '<option value="">Semua tahun</option>' + ys.map(y => '<option>' + esc(y) + '</option>').join('');
 }
 
-/* ============ RENDER ============ */
 function render() {
   const year = $('yearFilter').value;
   const q = $('search').value.toLowerCase();
@@ -504,7 +554,6 @@ function render() {
   
   $('empty').classList.toggle('hidden', list.length > 0);
   
-  // Render jadual utama
   $('recordsBody').innerHTML = list.map(r => `
     <tr>
       <td>${esc(r.Tahun)}${r.Semester ? '<div class="muted">Sem ' + esc(r.Semester) + '</div>' : ''}</td>
@@ -522,37 +571,68 @@ function render() {
       </td>
     </tr>
   `).join('');
-
-  // Render Senarai Semak
-  renderChecklist(list);
 }
 
-function renderChecklist(currentRecords) {
-  const grid = $('checklistGrid');
-  const requiredItems = categories[section] || [];
+/* ============ RENDER AUDIT CHECKLIST ============ */
+function renderAuditChecklist() {
+  const tbody = $('auditTable');
   
-  if (!requiredItems.length) {
-    grid.innerHTML = '<div class="muted">Tiada kategori untuk disemak.</div>';
-    return;
+  const sections = [
+    { key: 'PROFIL', label: 'FOLIO PENSYARAH' },
+    { key: 'KURSUS', label: 'FOLIO KURSUS' }
+  ];
+  
+  let html = '';
+  
+  sections.forEach(sec => {
+    html += `<tr><th colspan="4" style="background:#e0e7ff;font-size:14px;">${sec.label}</th></tr>`;
+    html += `<tr><th>Item</th><th>Status</th><th>Kiraan Fail Dimuat Naik</th><th>Tindakan</th></tr>`;
+    
+    const items = AUDIT_CHECKLIST[sec.key];
+    items.forEach(item => {
+      // Kira berapa banyak rekod dimuat naik untuk kategori ini
+      const count = records.filter(r => r.Section === sec.key && r.Kategori === item).length;
+      
+      // Semak status manual dari database
+      const isNA = checklistStatus[item] === 'TIADA';
+      
+      let statusHtml = '';
+      let actionHtml = '';
+      
+      if (isNA) {
+        statusHtml = '<span class="status-badge status-na">Tidak Terlibat</span>';
+        actionHtml = `<button class="iconbtn sm-btn" onclick="toggleChecklist('${esc(item)}', 'ADA')">Batal Tanda</button>`;
+      } else if (count > 0) {
+        statusHtml = '<span class="status-badge status-ok">Selesai</span>';
+        actionHtml = `<span class="muted" style="font-size:11px;">Guna tab ${sec.label} untuk edit</span>`;
+      } else {
+        statusHtml = '<span class="status-badge status-empty">Belum</span>';
+        actionHtml = `<button class="iconbtn sm-btn" style="background:#f1f5f9;color:#64748b;" onclick="toggleChecklist('${esc(item)}', 'TIADA')">Tanda Tidak Terlibat</button>`;
+      }
+
+      html += `
+        <tr>
+          <td>${esc(item)}</td>
+          <td>${statusHtml}</td>
+          <td><strong style="font-size:16px;color:var(--clay-primary);">${count}</strong> Fail</td>
+          <td>${actionHtml}</td>
+        </tr>
+      `;
+    });
+  });
+  
+  tbody.innerHTML = html;
+}
+
+async function toggleChecklist(itemName, status) {
+  try {
+    await api('toggleChecklist', { itemName, status });
+    checklistStatus[itemName] = status;
+    renderAuditChecklist(); // refresh view
+    toast('Status senarai semak dikemaskini.');
+  } catch (x) {
+    toast(x.message, true);
   }
-
-  const uploadedCategories = currentRecords.map(r => r.Kategori);
-
-  grid.innerHTML = requiredItems.map(cat => {
-    const isUploaded = uploadedCategories.includes(cat);
-    const className = isUploaded ? 'uploaded' : 'missing';
-    const icon = isUploaded ? '✅' : '❌';
-    const statusText = isUploaded ? 'Selesai' : 'Belum diisi / dimuat naik';
-    return `
-      <div class="checklist-item ${className}">
-        <span class="check-icon">${icon}</span>
-        <div>
-          <div>${esc(cat)}</div>
-          <div class="muted" style="font-size:10px;">${statusText}</div>
-        </div>
-      </div>
-    `;
-  }).join('');
 }
 
 /* ============ RECORD MODAL ============ */

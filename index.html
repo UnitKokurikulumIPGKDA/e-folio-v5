@@ -154,6 +154,11 @@ button{cursor:pointer;border:0}
 .stats-box .count { font-size: 28px; font-weight: 900; color: var(--clay-primary); }
 .stats-box .desc { font-size: 12px; color: var(--clay-muted); margin-top: 4px; }
 
+/* PEMANTAU/ADMIN UI */
+.admin-toolbar { display: flex; gap: 10px; margin-bottom: 15px; background: #fff; padding: 15px; border-radius: 16px; box-shadow: var(--clay-shadow-sm); align-items: center; flex-wrap: wrap; }
+.admin-toolbar select { border: none; border-radius: 10px; background: #f3f4ff; padding: 10px 13px; box-shadow: var(--clay-shadow-inset); outline: none; min-width: 200px; }
+.admin-toolbar label { font-weight: 800; font-size: 13px; color: var(--clay-ink); }
+
 /* RESPONSIVE */
 @media(max-width:720px){
   .topbar-inner,.main{padding-left:14px;padding-right:14px}
@@ -241,20 +246,28 @@ button{cursor:pointer;border:0}
       </div>
     </section>
 
-    <!-- TABS (4 Menu Berasingan) -->
+    <!-- TABS -->
     <div class="section-tabs">
       <button data-section="PROFIL" onclick="setSection('PROFIL')">Folio Pensyarah</button>
       <button data-section="KURSUS" onclick="setSection('KURSUS')">Folio Kursus</button>
       <button data-section="SEMAK" onclick="setSection('SEMAK')">Senarai Semak Audit</button>
       <button data-section="STATISTIK" onclick="setSection('STATISTIK')">Statistik Bahan</button>
+      <!-- Menu Admin (Hanya dipaparkan kepada Admin) -->
+      <button id="menuPemantau" data-section="PEMANTAU" class="hidden" onclick="setSection('PEMANTAU')">Pemantau / Admin</button>
     </div>
 
-    <!-- 1 & 2: KAWASAN JADUAL FOLIO -->
+    <!-- 1 & 2: KAWASAN JADUAL FOLIO (PENSYARAH) -->
     <div id="contentTable">
       <div class="toolbar">
         <h3 id="sectionTitle">Folio Pensyarah</h3>
         <div class="filters">
           <select id="yearFilter" onchange="render()"><option value="">Semua tahun</option></select>
+          <select id="semFilter" onchange="render()">
+            <option value="">Semua Semester</option>
+            <option value="I">Semester I</option>
+            <option value="II">Semester II</option>
+            <option value="III">Semester III</option>
+          </select>
           <input id="search" placeholder="Cari tajuk..." oninput="render()">
           <button class="primary" onclick="openRecord()">+ Tambah rekod</button>
         </div>
@@ -263,7 +276,7 @@ button{cursor:pointer;border:0}
       <div class="table-card">
         <table class="table">
           <thead>
-            <tr><th>Tahun</th><th>Kategori</th><th>Maklumat</th><th>Bahan</th><th>Tindakan</th></tr>
+            <tr><th>Tahun / Sem</th><th>Kategori</th><th>Maklumat</th><th>Bahan</th><th>Tindakan</th></tr>
           </thead>
           <tbody id="recordsBody"></tbody>
         </table>
@@ -288,8 +301,45 @@ button{cursor:pointer;border:0}
       <div class="toolbar">
         <h3>Pengiraan Bahan Dimuat Naik</h3>
       </div>
-      <div id="statsContainer" class="stats-container">
-        <!-- Kotak statistik akan dijana di sini -->
+      <div id="statsContainer" class="stats-container"></div>
+    </div>
+
+    <!-- 5: KAWASAN PEMANTAU / ADMIN -->
+    <div id="contentPemantau" class="hidden">
+      <div class="admin-toolbar">
+        <label>Pilih Pensyarah:</label>
+        <select id="adminLecturerSelect" onchange="renderAdminTable()">
+          <option value="">-- Semua Pensyarah --</option>
+          <!-- Options will be injected via JS -->
+        </select>
+      </div>
+
+      <div class="toolbar">
+        <h3>Paparan Folio Pensyarah</h3>
+        <div class="filters">
+          <select id="adminSectionFilter" onchange="renderAdminTable()">
+            <option value="">Semua Folio</option>
+            <option value="PROFIL">Folio Pensyarah</option>
+            <option value="KURSUS">Folio Kursus</option>
+          </select>
+          <select id="adminYearFilter" onchange="renderAdminTable()"><option value="">Semua Tahun</option></select>
+          <select id="adminSemFilter" onchange="renderAdminTable()">
+            <option value="">Semua Semester</option>
+            <option value="I">Semester I</option>
+            <option value="II">Semester II</option>
+            <option value="III">Semester III</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <table class="table">
+          <thead>
+            <tr><th>Pensyarah</th><th>Folio</th><th>Tahun / Sem</th><th>Kategori & Maklumat</th><th>Bahan</th></tr>
+          </thead>
+          <tbody id="adminRecordsBody"></tbody>
+        </table>
+        <div id="adminEmpty" class="empty hidden">Tiada rekod ditemui mengikut tapisan.</div>
       </div>
     </div>
 
@@ -368,7 +418,6 @@ const DEFAULT_CATEGORIES = {
   KURSUS: ['Senarai Semak KJ/KU PK1','Kalendar Akademik','Jadual Waktu (ATP)','Ringkasan Maklumat Kursus (RMK)','Induksi Kursus','Rancangan Pengajaran Semester (LAM-PT-03-01)','Rancangan Pengajaran Mingguan (LAM-PT-03-02)','Maklumat Pelajar','Rekod Kehadiran Pelajar','Rekod Pentaksiran Pelajar (JST/Rubrik/JSU)','Rekod Taklimat Pentaksiran','Borang LAM-PT-04-01','Bahan PdP','LAIN LAIN']
 };
 
-// Senarai semak berdasarkan dokumen rasmi PDF
 const AUDIT_CHECKLIST = {
   PROFIL: [
     'Curriculum Vitae', 
@@ -397,6 +446,7 @@ const AUDIT_CHECKLIST = {
 
 /* ============ STATE ============ */
 let token = '', user = null, section = 'PROFIL', records = [], checklistStatus = {}, categories = DEFAULT_CATEGORIES;
+let adminRecords = [], lecturersList = [];
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
@@ -504,9 +554,15 @@ async function start(j) {
   sessionStorage.setItem('efolio_session', JSON.stringify({ token, user }));
   $('auth').classList.add('hidden');
   $('app').classList.remove('hidden');
+  
+  if (user.Role === 'Admin') {
+    $('menuPemantau').classList.remove('hidden');
+  }
+
   paintUser();
   await loadBootstrap();
   await loadRecords();
+  await loadAdminData(); // Muat data admin secara senyap
 }
 
 function paintUser() {
@@ -536,15 +592,40 @@ async function loadRecords() {
   } catch (x) { toast(x.message, true); }
 }
 
+/* ============ ADMIN / PEMANTAU DATA ============ */
+async function loadAdminData() {
+  if (user.Role !== 'Admin') return;
+  try {
+    const [resLect, resRec] = await Promise.all([
+      api('listLecturers'),
+      api('listAllRecords')
+    ]);
+    
+    lecturersList = resLect.lecturers || [];
+    adminRecords = resRec.records || [];
+    
+    // Isi Dropdown Pensyarah
+    const sel = $('adminLecturerSelect');
+    sel.innerHTML = '<option value="">-- Semua Pensyarah --</option>' + 
+      lecturersList.map(l => `<option value="${esc(l.Email)}">${esc(l.NamaPenuh)}</option>`).join('');
+      
+    // Isi Dropdown Tahun
+    const years = [...new Set(adminRecords.map(r => r.Tahun).filter(Boolean))].sort().reverse();
+    $('adminYearFilter').innerHTML = '<option value="">Semua Tahun</option>' + years.map(y => `<option>${esc(y)}</option>`).join('');
+    
+    renderAdminTable();
+  } catch (x) { console.error('Admin load error:', x); }
+}
+
 /* ============ SECTION & RENDER ============ */
 function setSection(s) {
   section = s;
   document.querySelectorAll('[data-section]').forEach(b => b.classList.toggle('active', b.dataset.section === s));
   
-  // Sembunyikan semua kandungan
   $('contentTable').classList.add('hidden');
   $('contentSemak').classList.add('hidden');
   $('contentStatistik').classList.add('hidden');
+  $('contentPemantau').classList.add('hidden');
 
   if (s === 'PROFIL' || s === 'KURSUS') {
     $('contentTable').classList.remove('hidden');
@@ -557,6 +638,9 @@ function setSection(s) {
   } else if (s === 'STATISTIK') {
     $('contentStatistik').classList.remove('hidden');
     renderStatistikBahan();
+  } else if (s === 'PEMANTAU') {
+    $('contentPemantau').classList.remove('hidden');
+    renderAdminTable();
   }
 }
 
@@ -565,12 +649,16 @@ function fillYears() {
   $('yearFilter').innerHTML = '<option value="">Semua tahun</option>' + ys.map(y => '<option>' + esc(y) + '</option>').join('');
 }
 
+/* ============ RENDER JADUAL PENSYARAH ============ */
 function render() {
   const year = $('yearFilter').value;
+  const sem = $('semFilter').value;
   const q = $('search').value.toLowerCase();
+  
   const list = records.filter(r =>
     r.Section === section &&
     (!year || String(r.Tahun) === year) &&
+    (!sem || String(r.Semester) === sem) &&
     (!q || [r.Tajuk, r.Kategori, r.Keterangan].join(' ').toLowerCase().includes(q))
   );
   
@@ -595,32 +683,61 @@ function render() {
   `).join('');
 }
 
-/* ============ 3. RENDER AUDIT CHECKLIST ============ */
+/* ============ RENDER JADUAL ADMIN ============ */
+function renderAdminTable() {
+  const lec = $('adminLecturerSelect').value;
+  const sec = $('adminSectionFilter').value;
+  const year = $('adminYearFilter').value;
+  const sem = $('adminSemFilter').value;
+
+  const list = adminRecords.filter(r =>
+    (!lec || r.OwnerEmail === lec) &&
+    (!sec || r.Section === sec) &&
+    (!year || String(r.Tahun) === year) &&
+    (!sem || String(r.Semester) === sem)
+  );
+
+  $('adminEmpty').classList.toggle('hidden', list.length > 0);
+
+  $('adminRecordsBody').innerHTML = list.map(r => {
+    // Cari nama pensyarah
+    const lect = lecturersList.find(l => l.Email === r.OwnerEmail);
+    const lectName = lect ? lect.NamaPenuh : r.OwnerEmail;
+    
+    return `
+      <tr>
+        <td><div class="title">${esc(lectName)}</div></td>
+        <td><span class="badge">${r.Section === 'PROFIL' ? 'Pensyarah' : 'Kursus'}</span></td>
+        <td>${esc(r.Tahun)}${r.Semester ? '<div class="muted">Sem ' + esc(r.Semester) + '</div>' : ''}</td>
+        <td>
+          <div class="title" style="font-size:13px;">${esc(r.Kategori || '-')}</div>
+          <div class="muted" style="margin-top:4px;">${esc(r.Tajuk)}</div>
+        </td>
+        <td>${r.FileUrl ? '<a class="file-link" target="_blank" rel="noopener" href="' + esc(r.FileUrl) + '">Buka</a>' : '<span class="muted">Tiada bahan</span>'}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+/* ============ RENDER AUDIT CHECKLIST ============ */
 function renderAuditChecklist() {
   const tbody = $('auditTable');
-  
-  const sections = [
-    { key: 'PROFIL', label: 'FOLIO PENSYARAH' },
-    { key: 'KURSUS', label: 'FOLIO KURSUS' }
-  ];
-  
+  const sections = [ { key: 'PROFIL', label: 'FOLIO PENSYARAH' }, { key: 'KURSUS', label: 'FOLIO KURSUS' } ];
   let html = '';
   
   sections.forEach(sec => {
     html += `<tr><th colspan="4" style="background:#e0e7ff;font-size:14px;">${sec.label}</th></tr>`;
-    html += `<tr><th>Item</th><th>Status</th><th>Kiraan Fail Dimuat Naik</th><th>Tindakan</th></tr>`;
+    html += `<tr><th>Item</th><th>Status</th><th>Kiraan Fail</th><th>Tindakan</th></tr>`;
     
     const items = AUDIT_CHECKLIST[sec.key];
     items.forEach(item => {
       const count = records.filter(r => r.Section === sec.key && r.Kategori === item).length;
       const isNA = checklistStatus[item] === 'TIADA';
-      
-      let statusHtml = '';
-      let actionHtml = '';
+      let statusHtml = '', actionHtml = '';
       
       if (isNA) {
         statusHtml = '<span class="status-badge status-na">Tidak Terlibat</span>';
-        actionHtml = `<button class="iconbtn sm-btn" onclick="toggleChecklist('${esc(item)}', 'ADA')">Batal Tanda</button>`;
+        actionHtml = `<button class="iconbtn sm-btn" onclick="toggleChecklist('${esc(item)}', 'ADA')">Batal</button>`;
       } else if (count > 0) {
         statusHtml = '<span class="status-badge status-ok">Selesai</span>';
         actionHtml = `<span class="muted" style="font-size:11px;">Guna tab ${sec.label} untuk edit</span>`;
@@ -628,7 +745,6 @@ function renderAuditChecklist() {
         statusHtml = '<span class="status-badge status-empty">Belum</span>';
         actionHtml = `<button class="iconbtn sm-btn" style="background:#f1f5f9;color:#64748b;" onclick="toggleChecklist('${esc(item)}', 'TIADA')">Tanda Tidak Terlibat</button>`;
       }
-
       html += `
         <tr>
           <td>${esc(item)}</td>
@@ -639,7 +755,6 @@ function renderAuditChecklist() {
       `;
     });
   });
-  
   tbody.innerHTML = html;
 }
 
@@ -649,34 +764,20 @@ async function toggleChecklist(itemName, status) {
     checklistStatus[itemName] = status;
     renderAuditChecklist();
     toast('Status senarai semak dikemaskini.');
-  } catch (x) {
-    toast(x.message, true);
-  }
+  } catch (x) { toast(x.message, true); }
 }
 
-/* ============ 4. RENDER STATISTIK BAHAN ============ */
+/* ============ RENDER STATISTIK BAHAN ============ */
 function renderStatistikBahan() {
   const container = $('statsContainer');
-  
-  const sections = [
-    { key: 'PROFIL', label: 'Folio Pensyarah' },
-    { key: 'KURSUS', label: 'Folio Kursus' }
-  ];
-  
+  const sections = [ { key: 'PROFIL', label: 'Folio Pensyarah' }, { key: 'KURSUS', label: 'Folio Kursus' } ];
   let html = '';
   
   sections.forEach(sec => {
-    // Header Section
-    html += `<div style="grid-column: 1 / -1; margin-top: 10px; margin-bottom: 5px;">
-      <h3 style="margin: 0; color: var(--clay-primary); font-size: 16px;">${sec.label}</h3>
-    </div>`;
-    
+    html += `<div style="grid-column: 1 / -1; margin-top: 10px; margin-bottom: 5px;"><h3 style="margin: 0; color: var(--clay-primary); font-size: 16px;">${sec.label}</h3></div>`;
     const items = DEFAULT_CATEGORIES[sec.key];
-    
     items.forEach(item => {
-      // Kira berapa banyak fail dimuat naik untuk kategori ini
       const count = records.filter(r => r.Section === sec.key && r.Kategori === item).length;
-      
       html += `
         <div class="stats-box" style="border-left-color: ${count > 0 ? 'var(--clay-ok)' : 'var(--clay-danger)'};">
           <h4>${esc(item)}</h4>
@@ -686,7 +787,6 @@ function renderStatistikBahan() {
       `;
     });
   });
-  
   container.innerHTML = html;
 }
 
@@ -769,6 +869,7 @@ $('recordForm').onsubmit = async e => {
     closeModal('recordModal');
     await loadRecords();
     await loadBootstrap();
+    if (user.Role === 'Admin') loadAdminData(); // refresh admin data silently
     toast('Rekod berjaya disimpan.');
   } catch (x) {
     console.error('[recordForm]', x);
@@ -785,6 +886,7 @@ async function removeRecord(id) {
     await api('deleteRecord', { recordId: id });
     await loadRecords();
     await loadBootstrap();
+    if (user.Role === 'Admin') loadAdminData();
     toast('Rekod dipadam.');
   } catch (x) { toast(x.message, true); }
 }
@@ -860,9 +962,14 @@ async function logout() {
       token = j.token; user = j.user;
       $('auth').classList.add('hidden');
       $('app').classList.remove('hidden');
+      
+      if (user.Role === 'Admin') {
+        $('menuPemantau').classList.remove('hidden');
+      }
+      
       paintUser();
       loadBootstrap();
-      loadRecords();
+      loadRecords().then(() => loadAdminData());
     } catch (x) { sessionStorage.clear(); }
   }
   setSection('PROFIL');

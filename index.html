@@ -65,6 +65,8 @@ button { cursor: pointer; border: none; }
 .btn-outline:hover { background: var(--bg-app); }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 6px; }
+.link-text { color: var(--primary); font-weight: bold; text-decoration: none; cursor: pointer; }
+.link-text:hover { text-decoration: underline; }
 
 /* ============ LAYOUT UTAMA ============ */
 .app-layout { display: flex; min-height: 100vh; }
@@ -167,7 +169,7 @@ tr:last-child td { border-bottom: none; }
 </head>
 <body>
 
-<!-- ============ AUTH (LOGIN & REGISTER) ============ -->
+<!-- ============ AUTH (LOGIN, REGISTER, FORGOT, RESET) ============ -->
 <div id="authView" class="auth-container">
   <div class="auth-card">
     <div class="auth-logo">
@@ -175,9 +177,9 @@ tr:last-child td { border-bottom: none; }
       <h1 id="authTitle">E-Folio IPG</h1>
       <p id="authSubtitle">Sistem Pengurusan Folio Pensyarah</p>
     </div>
-    <div id="authMsg" class="form-group hidden" style="color: var(--danger); font-size: 13px; font-weight: bold; text-align: center;"></div>
+    <div id="authMsg" class="form-group hidden" style="font-size: 13px; font-weight: bold; text-align: center;"></div>
 
-    <!-- FORM LOGIN -->
+    <!-- 1. FORM LOGIN -->
     <form id="loginForm">
       <div class="form-group">
         <label>Emel Rasmi</label>
@@ -187,10 +189,13 @@ tr:last-child td { border-bottom: none; }
         <label>Kata Laluan</label>
         <input id="loginPassword" type="password" class="form-control" required placeholder="••••••••">
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" id="loginBtn">Log Masuk</button>
+      <div style="text-align: right; margin-bottom: 15px;">
+        <a href="#" onclick="toggleAuth('forgot'); return false;" class="link-text" style="font-size: 12px;">Lupa Kata Laluan?</a>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;" id="loginBtn">Log Masuk</button>
     </form>
 
-    <!-- FORM REGISTER (Tersembunyi) -->
+    <!-- 2. FORM REGISTER (Tersembunyi) -->
     <form id="registerForm" class="hidden">
       <div class="form-group">
         <label>Nama Penuh</label>
@@ -243,12 +248,37 @@ tr:last-child td { border-bottom: none; }
         <input id="regPhoto" type="file" accept="image/*" style="font-size: 13px;">
         <img id="regPreview" class="hidden" style="max-width: 60px; margin-top: 10px; border-radius: 8px;">
       </div>
-      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 10px;" id="regBtn">Daftar Akaun</button>
+      <button type="submit" class="btn btn-primary" style="width: 100%;" id="regBtn">Daftar Akaun</button>
     </form>
 
-    <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);">
+    <!-- 3. FORM LUPA KATA LALUAN (Tersembunyi) -->
+    <form id="forgotForm" class="hidden">
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; text-align: center;">Masukkan emel rasmi anda. Kami akan menghantar pautan untuk set semula kata laluan.</p>
+      <div class="form-group">
+        <label>Emel Rasmi</label>
+        <input id="forgotEmail" type="email" class="form-control" required placeholder="nama@ipgm.edu.my">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;" id="forgotBtn">Hantar Pautan</button>
+    </form>
+
+    <!-- 4. FORM SET SEMULA KATA LALUAN (Tersembunyi) -->
+    <form id="resetForm" class="hidden">
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; text-align: center;">Sila masukkan kata laluan baharu anda (minimum 8 aksara).</p>
+      <input type="hidden" id="resetToken">
+      <div class="form-group">
+        <label>Kata Laluan Baharu</label>
+        <input id="resetPassword" type="password" class="form-control" required minlength="8" placeholder="••••••••">
+      </div>
+      <div class="form-group">
+        <label>Sahkan Kata Laluan</label>
+        <input id="resetPassword2" type="password" class="form-control" required minlength="8" placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%;" id="resetBtn">Simpan Kata Laluan</button>
+    </form>
+
+    <div style="text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-muted);" id="authToggleArea">
       <span id="toggleText">Belum ada akaun?</span> 
-      <a href="#" onclick="toggleAuth(); return false;" id="toggleLink" style="color: var(--primary); font-weight: bold;">Daftar di sini</a>
+      <a href="#" onclick="toggleAuth('register'); return false;" class="link-text" id="toggleLink">Daftar di sini</a>
     </div>
   </div>
   
@@ -423,7 +453,6 @@ tr:last-child td { border-bottom: none; }
             <h3 class="card-title" style="color: var(--primary); margin-bottom: 15px;">Panel Pemantau / Admin</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%;">
               
-              <!-- TAPISAN JABATAN -->
               <select id="adminDeptFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="updateAdminLecturerList()">
                 <option value="">-- Semua Jabatan --</option>
                 <optgroup label="Sektor Kecemerlangan Akademik">
@@ -446,24 +475,20 @@ tr:last-child td { border-bottom: none; }
                 </optgroup>
               </select>
 
-              <!-- TAPISAN PENSYARAH -->
               <select id="adminLecturerSelect" class="form-control" onchange="renderAdminTable()" style="width: auto; padding: 8px 12px;">
                 <option value="">-- Semua Pensyarah --</option>
               </select>
 
-              <!-- TAPISAN JENIS FOLIO (BARU) -->
               <select id="adminSectionFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
                 <option value="">-- Semua Folio --</option>
                 <option value="PROFIL">Folio Pensyarah</option>
                 <option value="KURSUS">Folio Kursus</option>
               </select>
 
-              <!-- TAPISAN TAHUN -->
               <select id="adminYearFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
                 <option value="">Semua Tahun</option>
               </select>
 
-              <!-- TAPISAN SEMESTER -->
               <select id="adminSemFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
                 <option value="">Semua Semester</option>
                 <option value="I">I</option><option value="II">II</option><option value="III">III</option>
@@ -611,18 +636,15 @@ tr:last-child td { border-bottom: none; }
 
 <script>
 /* ============ KESELAMATAN: LUMPUHKAN FUNGSI KLIK KANAN & SHORTCUT ============ */
-// 1. Halang klik kanan (Context Menu)
 document.addEventListener('contextmenu', event => event.preventDefault());
-
-// 2. Halang butang pintasan papan kekunci (F12, Ctrl+U, Ctrl+S, Ctrl+Shift+I/J/C)
 document.onkeydown = function(e) {
   if (e.keyCode == 123) { return false; } // F12
   if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) { return false; } // Ctrl+Shift+I/J/C
-  if (e.ctrlKey && e.keyCode == 85) { return false; } // Ctrl+U (View Source)
-  if (e.ctrlKey && e.keyCode == 83) { return false; } // Ctrl+S (Save Page)
-  if (e.ctrlKey && e.keyCode == 80) { return false; } // Ctrl+P (Print)
-  if (e.ctrlKey && e.keyCode == 65) { return false; } // Ctrl+A (Select All)
-  if (e.ctrlKey && e.keyCode == 67) { return false; } // Ctrl+C (Copy)
+  if (e.ctrlKey && e.keyCode == 85) { return false; } // Ctrl+U
+  if (e.ctrlKey && e.keyCode == 83) { return false; } // Ctrl+S
+  if (e.ctrlKey && e.keyCode == 80) { return false; } // Ctrl+P
+  if (e.ctrlKey && e.keyCode == 65) { return false; } // Ctrl+A
+  if (e.ctrlKey && e.keyCode == 67) { return false; } // Ctrl+C
 };
 /* ======================================================================= */
 
@@ -656,19 +678,58 @@ async function api(action, data={}) {
   } catch(e) { throw e; }
 }
 
-/* ============ AUTH (LOGIN & REGISTER TOGGLE) ============ */
-let isLoginMode = true;
-function toggleAuth() {
-  isLoginMode = !isLoginMode;
-  $('loginForm').classList.toggle('hidden', !isLoginMode);
-  $('registerForm').classList.toggle('hidden', isLoginMode);
-  $('authTitle').textContent = isLoginMode ? 'E-Folio IPG' : 'Daftar Akaun';
-  $('authSubtitle').textContent = isLoginMode ? 'Sistem Pengurusan Folio Pensyarah' : 'Sila lengkapkan maklumat anda';
-  $('toggleText').textContent = isLoginMode ? 'Belum ada akaun?' : 'Sudah ada akaun?';
-  $('toggleLink').textContent = isLoginMode ? 'Daftar di sini' : 'Log masuk sini';
+/* ============ AUTH UI LOGIC ============ */
+function toggleAuth(mode) {
+  $('loginForm').classList.add('hidden');
+  $('registerForm').classList.add('hidden');
+  $('forgotForm').classList.add('hidden');
+  $('resetForm').classList.add('hidden');
+  
   $('authMsg').classList.add('hidden');
+  $('authToggleArea').classList.remove('hidden'); // Default tunjuk toggle
+  
+  if (mode === 'login') {
+    $('loginForm').classList.remove('hidden');
+    $('authTitle').textContent = 'E-Folio IPG';
+    $('authSubtitle').textContent = 'Sistem Pengurusan Folio Pensyarah';
+    $('toggleText').textContent = 'Belum ada akaun?';
+    $('toggleLink').textContent = 'Daftar di sini';
+    $('toggleLink').onclick = function() { toggleAuth('register'); return false; };
+  } else if (mode === 'register') {
+    $('registerForm').classList.remove('hidden');
+    $('authTitle').textContent = 'Daftar Akaun';
+    $('authSubtitle').textContent = 'Sila lengkapkan maklumat anda';
+    $('toggleText').textContent = 'Sudah ada akaun?';
+    $('toggleLink').textContent = 'Log masuk sini';
+    $('toggleLink').onclick = function() { toggleAuth('login'); return false; };
+  } else if (mode === 'forgot') {
+    $('forgotForm').classList.remove('hidden');
+    $('authTitle').textContent = 'Lupa Kata Laluan';
+    $('authSubtitle').textContent = 'Set semula akses akaun anda';
+    $('toggleText').textContent = 'Kembali ke';
+    $('toggleLink').textContent = 'Log Masuk';
+    $('toggleLink').onclick = function() { toggleAuth('login'); return false; };
+  } else if (mode === 'reset') {
+    $('resetForm').classList.remove('hidden');
+    $('authTitle').textContent = 'Kata Laluan Baharu';
+    $('authSubtitle').textContent = 'Sila tetapkan kata laluan anda';
+    $('authToggleArea').classList.add('hidden'); // Sembunyikan toggle masa reset
+  }
 }
 
+function showAuthMsg(t, bad = true) {
+  $('authMsg').textContent = t;
+  $('authMsg').className = 'form-group';
+  $('authMsg').style.color = bad ? 'var(--danger)' : 'var(--success)';
+  $('authMsg').style.background = bad ? '#fef2f2' : '#ecfdf5';
+  $('authMsg').style.padding = '10px';
+  $('authMsg').style.borderRadius = '8px';
+  $('authMsg').style.border = '1px solid ' + (bad ? '#fecdd3' : '#a7f3d0');
+}
+
+/* ============ FORM SUBMISSIONS ============ */
+
+// 1. LOGIN
 $('loginForm').onsubmit = async e => {
   e.preventDefault();
   const btn = $('loginBtn'); const orig = btn.textContent;
@@ -677,11 +738,11 @@ $('loginForm').onsubmit = async e => {
     const j = await api('login', { email: $('loginEmail').value, password: $('loginPassword').value });
     startApp(j);
   } catch(x) {
-    $('authMsg').classList.remove('hidden');
-    $('authMsg').textContent = x.message;
+    showAuthMsg(x.message);
   } finally { btn.disabled = false; btn.textContent = orig; }
 };
 
+// 2. REGISTER
 $('regPhoto').onchange = e => {
   const f = e.target.files[0];
   if(f) { $('regPreview').src = URL.createObjectURL(f); $('regPreview').classList.remove('hidden'); }
@@ -709,8 +770,39 @@ $('registerForm').onsubmit = async e => {
     });
     startApp(j);
   } catch(x) {
-    $('authMsg').classList.remove('hidden');
-    $('authMsg').textContent = x.message;
+    showAuthMsg(x.message);
+  } finally { btn.disabled = false; btn.textContent = orig; }
+};
+
+// 3. FORGOT PASSWORD
+$('forgotForm').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('forgotBtn'); const orig = btn.textContent;
+  try {
+    btn.disabled = true; btn.textContent = 'Menghantar...';
+    const j = await api('forgotPassword', { email: $('forgotEmail').value });
+    showAuthMsg(j.message, false); // Papar mesej berjaya
+    $('forgotForm').reset();
+  } catch(x) {
+    showAuthMsg(x.message);
+  } finally { btn.disabled = false; btn.textContent = orig; }
+};
+
+// 4. RESET PASSWORD
+$('resetForm').onsubmit = async e => {
+  e.preventDefault();
+  const p1 = $('resetPassword').value;
+  const p2 = $('resetPassword2').value;
+  if (p1 !== p2) return showAuthMsg('Kata laluan tidak sepadan.');
+  
+  const btn = $('resetBtn'); const orig = btn.textContent;
+  try {
+    btn.disabled = true; btn.textContent = 'Menyimpan...';
+    const j = await api('resetPassword', { token: $('resetToken').value, password: p1 });
+    showAuthMsg(j.message, false);
+    setTimeout(() => { toggleAuth('login'); $('resetForm').reset(); }, 2000);
+  } catch(x) {
+    showAuthMsg(x.message);
   } finally { btn.disabled = false; btn.textContent = orig; }
 };
 
@@ -840,25 +932,19 @@ function render() {
 function renderAdminTable() {
   const dept = $('adminDeptFilter').value;
   const lec = $('adminLecturerSelect').value;
-  const secType = $('adminSectionFilter').value; // Tapisan Folio Pensyarah/Kursus
+  const secType = $('adminSectionFilter').value;
   const year = $('adminYearFilter').value;
   const sem = $('adminSemFilter').value;
 
   const list = adminRecords.filter(r => {
-    // Tapis ikut Jabatan (jika dipilih)
     if (dept) {
       const lecturer = lecturersList.find(l => l.Email === r.OwnerEmail);
       if (!lecturer || lecturer.Jabatan !== dept) return false;
     }
-    // Tapis ikut Pensyarah (jika dipilih)
     if (lec && r.OwnerEmail !== lec) return false;
-    
-    // Tapis ikut Jenis Folio (PROFIL atau KURSUS)
     if (secType && r.Section !== secType) return false;
-    
     if (year && String(r.Tahun) !== year) return false;
     if (sem && String(r.Semester) !== sem) return false;
-    
     return true;
   });
 
@@ -1033,8 +1119,21 @@ function toBase64(file) {
   });
 }
 
-/* ============ BOOT ============ */
+/* ============ BOOT & URL PARAM CHECK ============ */
 (function(){
+  // 1. Semak jika ada parameter reset dalam URL (contoh: ?reset=TOKEN)
+  const urlParams = new URLSearchParams(window.location.search);
+  const resetToken = urlParams.get('reset');
+  
+  if (resetToken) {
+    $('resetToken').value = resetToken;
+    toggleAuth('reset');
+    // Buang token dari URL untuk keselamatan
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return;
+  }
+
+  // 2. Semak sesi sedia ada
   const s = sessionStorage.getItem('efolio_session');
   if(s) { try { startApp(JSON.parse(s)); } catch(e) { sessionStorage.clear(); } }
 })();

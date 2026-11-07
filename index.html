@@ -147,6 +147,13 @@ button{cursor:pointer;border:0}
 .status-empty { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
 .status-na { background: #f1f5f9; color: #64748b; border: 1px solid #e2e8f0; }
 
+/* STATS BOXES */
+.stats-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stats-box { background: var(--clay-card); border-radius: 20px; padding: 20px; box-shadow: var(--clay-shadow); border-left: 6px solid var(--clay-primary); }
+.stats-box h4 { margin: 0 0 10px 0; font-size: 14px; color: var(--clay-ink); }
+.stats-box .count { font-size: 28px; font-weight: 900; color: var(--clay-primary); }
+.stats-box .desc { font-size: 12px; color: var(--clay-muted); margin-top: 4px; }
+
 /* RESPONSIVE */
 @media(max-width:720px){
   .topbar-inner,.main{padding-left:14px;padding-right:14px}
@@ -234,14 +241,15 @@ button{cursor:pointer;border:0}
       </div>
     </section>
 
-    <!-- TABS -->
+    <!-- TABS (4 Menu Berasingan) -->
     <div class="section-tabs">
       <button data-section="PROFIL" onclick="setSection('PROFIL')">Folio Pensyarah</button>
       <button data-section="KURSUS" onclick="setSection('KURSUS')">Folio Kursus</button>
       <button data-section="SEMAK" onclick="setSection('SEMAK')">Senarai Semak Audit</button>
+      <button data-section="STATISTIK" onclick="setSection('STATISTIK')">Statistik Bahan</button>
     </div>
 
-    <!-- KAWASAN JADUAL (Disembunyikan jika tab SEMAK dipilih) -->
+    <!-- 1 & 2: KAWASAN JADUAL FOLIO -->
     <div id="contentTable">
       <div class="toolbar">
         <h3 id="sectionTitle">Folio Pensyarah</h3>
@@ -263,17 +271,25 @@ button{cursor:pointer;border:0}
       </div>
     </div>
 
-    <!-- KAWASAN SENARAI SEMAK AUDIT -->
+    <!-- 3: KAWASAN SENARAI SEMAK AUDIT -->
     <div id="contentSemak" class="hidden">
       <div class="toolbar">
         <h3>Senarai Semak Audit (Format PDF 2025)</h3>
       </div>
       <div class="table-card">
         <div style="padding: 20px;">
-          <table class="checklist-table" id="auditTable">
-            <!-- Content will be injected via JS -->
-          </table>
+          <table class="checklist-table" id="auditTable"></table>
         </div>
+      </div>
+    </div>
+
+    <!-- 4: KAWASAN STATISTIK BAHAN -->
+    <div id="contentStatistik" class="hidden">
+      <div class="toolbar">
+        <h3>Pengiraan Bahan Dimuat Naik</h3>
+      </div>
+      <div id="statsContainer" class="stats-container">
+        <!-- Kotak statistik akan dijana di sini -->
       </div>
     </div>
 
@@ -352,7 +368,7 @@ const DEFAULT_CATEGORIES = {
   KURSUS: ['Senarai Semak KJ/KU PK1','Kalendar Akademik','Jadual Waktu (ATP)','Ringkasan Maklumat Kursus (RMK)','Induksi Kursus','Rancangan Pengajaran Semester (LAM-PT-03-01)','Rancangan Pengajaran Mingguan (LAM-PT-03-02)','Maklumat Pelajar','Rekod Kehadiran Pelajar','Rekod Pentaksiran Pelajar (JST/Rubrik/JSU)','Rekod Taklimat Pentaksiran','Borang LAM-PT-04-01','Bahan PdP','LAIN LAIN']
 };
 
-// Senarai semak berdasarkan PDF 2025
+// Senarai semak berdasarkan dokumen rasmi PDF
 const AUDIT_CHECKLIST = {
   PROFIL: [
     'Curriculum Vitae', 
@@ -525,16 +541,22 @@ function setSection(s) {
   section = s;
   document.querySelectorAll('[data-section]').forEach(b => b.classList.toggle('active', b.dataset.section === s));
   
-  if (s === 'SEMAK') {
-    $('contentTable').classList.add('hidden');
-    $('contentSemak').classList.remove('hidden');
-    renderAuditChecklist();
-  } else {
+  // Sembunyikan semua kandungan
+  $('contentTable').classList.add('hidden');
+  $('contentSemak').classList.add('hidden');
+  $('contentStatistik').classList.add('hidden');
+
+  if (s === 'PROFIL' || s === 'KURSUS') {
     $('contentTable').classList.remove('hidden');
-    $('contentSemak').classList.add('hidden');
     $('sectionTitle').textContent = s === 'PROFIL' ? 'Folio Pensyarah' : 'Folio Kursus';
     fillYears();
     render();
+  } else if (s === 'SEMAK') {
+    $('contentSemak').classList.remove('hidden');
+    renderAuditChecklist();
+  } else if (s === 'STATISTIK') {
+    $('contentStatistik').classList.remove('hidden');
+    renderStatistikBahan();
   }
 }
 
@@ -573,7 +595,7 @@ function render() {
   `).join('');
 }
 
-/* ============ RENDER AUDIT CHECKLIST ============ */
+/* ============ 3. RENDER AUDIT CHECKLIST ============ */
 function renderAuditChecklist() {
   const tbody = $('auditTable');
   
@@ -590,10 +612,7 @@ function renderAuditChecklist() {
     
     const items = AUDIT_CHECKLIST[sec.key];
     items.forEach(item => {
-      // Kira berapa banyak rekod dimuat naik untuk kategori ini
       const count = records.filter(r => r.Section === sec.key && r.Kategori === item).length;
-      
-      // Semak status manual dari database
       const isNA = checklistStatus[item] === 'TIADA';
       
       let statusHtml = '';
@@ -628,11 +647,47 @@ async function toggleChecklist(itemName, status) {
   try {
     await api('toggleChecklist', { itemName, status });
     checklistStatus[itemName] = status;
-    renderAuditChecklist(); // refresh view
+    renderAuditChecklist();
     toast('Status senarai semak dikemaskini.');
   } catch (x) {
     toast(x.message, true);
   }
+}
+
+/* ============ 4. RENDER STATISTIK BAHAN ============ */
+function renderStatistikBahan() {
+  const container = $('statsContainer');
+  
+  const sections = [
+    { key: 'PROFIL', label: 'Folio Pensyarah' },
+    { key: 'KURSUS', label: 'Folio Kursus' }
+  ];
+  
+  let html = '';
+  
+  sections.forEach(sec => {
+    // Header Section
+    html += `<div style="grid-column: 1 / -1; margin-top: 10px; margin-bottom: 5px;">
+      <h3 style="margin: 0; color: var(--clay-primary); font-size: 16px;">${sec.label}</h3>
+    </div>`;
+    
+    const items = DEFAULT_CATEGORIES[sec.key];
+    
+    items.forEach(item => {
+      // Kira berapa banyak fail dimuat naik untuk kategori ini
+      const count = records.filter(r => r.Section === sec.key && r.Kategori === item).length;
+      
+      html += `
+        <div class="stats-box" style="border-left-color: ${count > 0 ? 'var(--clay-ok)' : 'var(--clay-danger)'};">
+          <h4>${esc(item)}</h4>
+          <div class="count">${count}</div>
+          <div class="desc">Bahan dimuat naik</div>
+        </div>
+      `;
+    });
+  });
+  
+  container.innerHTML = html;
 }
 
 /* ============ RECORD MODAL ============ */

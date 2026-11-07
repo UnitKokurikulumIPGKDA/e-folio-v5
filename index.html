@@ -423,6 +423,7 @@ tr:last-child td { border-bottom: none; }
             <h3 class="card-title" style="color: var(--primary); margin-bottom: 15px;">Panel Pemantau / Admin</h3>
             <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%;">
               
+              <!-- TAPISAN JABATAN -->
               <select id="adminDeptFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="updateAdminLecturerList()">
                 <option value="">-- Semua Jabatan --</option>
                 <optgroup label="Sektor Kecemerlangan Akademik">
@@ -445,14 +446,24 @@ tr:last-child td { border-bottom: none; }
                 </optgroup>
               </select>
 
+              <!-- TAPISAN PENSYARAH -->
               <select id="adminLecturerSelect" class="form-control" onchange="renderAdminTable()" style="width: auto; padding: 8px 12px;">
                 <option value="">-- Semua Pensyarah --</option>
               </select>
 
+              <!-- TAPISAN JENIS FOLIO (BARU) -->
+              <select id="adminSectionFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
+                <option value="">-- Semua Folio --</option>
+                <option value="PROFIL">Folio Pensyarah</option>
+                <option value="KURSUS">Folio Kursus</option>
+              </select>
+
+              <!-- TAPISAN TAHUN -->
               <select id="adminYearFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
                 <option value="">Semua Tahun</option>
               </select>
 
+              <!-- TAPISAN SEMESTER -->
               <select id="adminSemFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
                 <option value="">Semua Semester</option>
                 <option value="I">I</option><option value="II">II</option><option value="III">III</option>
@@ -829,15 +840,21 @@ function render() {
 function renderAdminTable() {
   const dept = $('adminDeptFilter').value;
   const lec = $('adminLecturerSelect').value;
+  const secType = $('adminSectionFilter').value; // Tapisan Folio Pensyarah/Kursus
   const year = $('adminYearFilter').value;
   const sem = $('adminSemFilter').value;
 
   const list = adminRecords.filter(r => {
+    // Tapis ikut Jabatan (jika dipilih)
     if (dept) {
       const lecturer = lecturersList.find(l => l.Email === r.OwnerEmail);
       if (!lecturer || lecturer.Jabatan !== dept) return false;
     }
+    // Tapis ikut Pensyarah (jika dipilih)
     if (lec && r.OwnerEmail !== lec) return false;
+    
+    // Tapis ikut Jenis Folio (PROFIL atau KURSUS)
+    if (secType && r.Section !== secType) return false;
     
     if (year && String(r.Tahun) !== year) return false;
     if (sem && String(r.Semester) !== sem) return false;

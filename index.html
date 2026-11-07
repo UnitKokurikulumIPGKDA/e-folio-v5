@@ -32,7 +32,6 @@ body {
   font-family: var(--font-main); 
   background: var(--bg-app); 
   color: var(--text-main); 
-  /* Keselamatan: Halang pemilihan teks (Copy) */
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -588,7 +587,6 @@ tr:last-child td { border-bottom: none; }
         <div class="form-group">
           <label>Jabatan / Unit</label>
           <select id="pDept" class="form-control">
-            <!-- Sama seperti senarai pendaftaran -->
             <optgroup label="Sektor Kecemerlangan Akademik">
               <option value="Sekretariat Jaminan Kualiti & Pematuhan Polisi">Sekretariat Jaminan Kualiti & Pematuhan Polisi (SJKPP)</option>
               <option value="Jabatan Kecemerlangan Akademik">Jabatan Kecemerlangan Akademik (JKA)</option>
@@ -686,7 +684,7 @@ function toggleAuth(mode) {
   $('resetForm').classList.add('hidden');
   
   $('authMsg').classList.add('hidden');
-  $('authToggleArea').classList.remove('hidden'); // Default tunjuk toggle
+  $('authToggleArea').classList.remove('hidden');
   
   if (mode === 'login') {
     $('loginForm').classList.remove('hidden');
@@ -713,7 +711,7 @@ function toggleAuth(mode) {
     $('resetForm').classList.remove('hidden');
     $('authTitle').textContent = 'Kata Laluan Baharu';
     $('authSubtitle').textContent = 'Sila tetapkan kata laluan anda';
-    $('authToggleArea').classList.add('hidden'); // Sembunyikan toggle masa reset
+    $('authToggleArea').classList.add('hidden');
   }
 }
 
@@ -729,7 +727,6 @@ function showAuthMsg(t, bad = true) {
 
 /* ============ FORM SUBMISSIONS ============ */
 
-// 1. LOGIN
 $('loginForm').onsubmit = async e => {
   e.preventDefault();
   const btn = $('loginBtn'); const orig = btn.textContent;
@@ -742,7 +739,6 @@ $('loginForm').onsubmit = async e => {
   } finally { btn.disabled = false; btn.textContent = orig; }
 };
 
-// 2. REGISTER
 $('regPhoto').onchange = e => {
   const f = e.target.files[0];
   if(f) { $('regPreview').src = URL.createObjectURL(f); $('regPreview').classList.remove('hidden'); }
@@ -774,21 +770,19 @@ $('registerForm').onsubmit = async e => {
   } finally { btn.disabled = false; btn.textContent = orig; }
 };
 
-// 3. FORGOT PASSWORD
 $('forgotForm').onsubmit = async e => {
   e.preventDefault();
   const btn = $('forgotBtn'); const orig = btn.textContent;
   try {
     btn.disabled = true; btn.textContent = 'Menghantar...';
     const j = await api('forgotPassword', { email: $('forgotEmail').value });
-    showAuthMsg(j.message, false); // Papar mesej berjaya
+    showAuthMsg(j.message, false);
     $('forgotForm').reset();
   } catch(x) {
     showAuthMsg(x.message);
   } finally { btn.disabled = false; btn.textContent = orig; }
 };
 
-// 4. RESET PASSWORD
 $('resetForm').onsubmit = async e => {
   e.preventDefault();
   const p1 = $('resetPassword').value;
@@ -859,7 +853,7 @@ async function loadAdminData() {
     lecturersList = resL.lecturers || [];
     adminRecords = resR.records || [];
     
-    updateAdminLecturerList(); // Isi dropdown nama pensyarah
+    updateAdminLecturerList();
     
     const years = [...new Set(adminRecords.map(r => r.Tahun).filter(Boolean))].sort().reverse();
     $('adminYearFilter').innerHTML = '<option value="">Semua Tahun</option>' + years.map(y => `<option>${esc(y)}</option>`).join('');
@@ -1121,19 +1115,16 @@ function toBase64(file) {
 
 /* ============ BOOT & URL PARAM CHECK ============ */
 (function(){
-  // 1. Semak jika ada parameter reset dalam URL (contoh: ?reset=TOKEN)
   const urlParams = new URLSearchParams(window.location.search);
   const resetToken = urlParams.get('reset');
   
   if (resetToken) {
     $('resetToken').value = resetToken;
     toggleAuth('reset');
-    // Buang token dari URL untuk keselamatan
     window.history.replaceState({}, document.title, window.location.pathname);
     return;
   }
 
-  // 2. Semak sesi sedia ada
   const s = sessionStorage.getItem('efolio_session');
   if(s) { try { startApp(JSON.parse(s)); } catch(e) { sessionStorage.clear(); } }
 })();

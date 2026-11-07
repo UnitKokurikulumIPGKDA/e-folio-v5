@@ -195,7 +195,6 @@ tr:last-child td { border-bottom: none; }
       </div>
       <div class="form-group">
         <label>Jabatan / Unit</label>
-        <!-- DROPDOWN JABATAN (SEKTOR KECEMERLANGAN AKADEMIK SAHAJA) -->
         <select id="regDept" class="form-control" required>
           <option value="">-- Pilih Jabatan / Unit --</option>
           <optgroup label="Sektor Kecemerlangan Akademik">
@@ -392,28 +391,59 @@ tr:last-child td { border-bottom: none; }
           <div id="statsContainer" class="grid-list"></div>
         </div>
 
+        <!-- PANEL PEMANTAU (ADMIN) DENGAN SORTING JABATAN -->
         <div id="viewAdmin" class="card hidden">
-          <div class="card-header" style="background: #f8fafc; border-bottom: 2px solid var(--primary);">
-            <h3 class="card-title" style="color: var(--primary);">Panel Pemantau / Admin</h3>
-            <div class="card-tools">
-              <select id="adminLecturerSelect" class="form-control" onchange="renderAdminTable()" style="width: auto; padding: 8px 12px;">
-                <option value="">-- Pilih Pensyarah --</option>
+          <div class="card-header" style="background: #f8fafc; border-bottom: 2px solid var(--primary); flex-direction: column; align-items: flex-start;">
+            <h3 class="card-title" style="color: var(--primary); margin-bottom: 15px;">Panel Pemantau / Admin</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; width: 100%;">
+              
+              <!-- Dropdown Tapisan Jabatan -->
+              <select id="adminDeptFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="updateAdminLecturerList()">
+                <option value="">-- Semua Jabatan --</option>
+                <optgroup label="Sektor Kecemerlangan Akademik">
+                  <option value="Sekretariat Jaminan Kualiti & Pematuhan Polisi">Sekretariat Jaminan Kualiti & Pematuhan Polisi (SJKPP)</option>
+                  <option value="Jabatan Kecemerlangan Akademik">Jabatan Kecemerlangan Akademik (JKA)</option>
+                  <option value="Jabatan Perancangan, Penyelidikan dan Inovasi">Jabatan Perancangan, Penyelidikan dan Inovasi (JPPI)</option>
+                  <option value="Jabatan Hal Ehwal Pelajar">Jabatan Hal Ehwal Pelajar (JHEP)</option>
+                  <option value="Jabatan Ilmu Pendidikan">Jabatan Ilmu Pendidikan (JIP)</option>
+                  <option value="Jabatan Bimbingan dan Kaunseling">Jabatan Bimbingan dan Kaunseling (JBK)</option>
+                  <option value="Jabatan Pendidikan Islam dan Moral">Jabatan Pendidikan Islam dan Moral (JPIM)</option>
+                  <option value="Jabatan Bahasa Arab">Jabatan Bahasa Arab (JBA)</option>
+                  <option value="Jabatan Pendidikan Khas">Jabatan Pendidikan Khas (JPK)</option>
+                  <option value="Jabatan Pengajian Melayu">Jabatan Pengajian Melayu (JPM)</option>
+                  <option value="Jabatan Sains Sosial">Jabatan Sains Sosial</option>
+                  <option value="Jabatan Matematik dan Sains">Jabatan Matematik dan Sains</option>
+                  <option value="Jabatan Pengajian Inggeris">Jabatan Pengajian Inggeris</option>
+                  <option value="Jabatan Seni Visual dan Muzik">Jabatan Seni Visual dan Muzik</option>
+                  <option value="Jabatan Pendidikan Jasmani dan Kesihatan">Jabatan Pendidikan Jasmani dan Kesihatan</option>
+                  <option value="Unit Kokurikulum">Unit Kokurikulum</option>
+                </optgroup>
               </select>
-            </div>
-          </div>
-          <div class="card-body">
-            <div style="padding: 15px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; gap: 10px; flex-wrap: wrap;">
-              <select id="adminYearFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()"><option value="">Semua Tahun</option></select>
+
+              <!-- Dropdown Nama Pensyarah -->
+              <select id="adminLecturerSelect" class="form-control" onchange="renderAdminTable()" style="width: auto; padding: 8px 12px;">
+                <option value="">-- Semua Pensyarah --</option>
+              </select>
+
+              <!-- Dropdown Tahun -->
+              <select id="adminYearFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
+                <option value="">Semua Tahun</option>
+              </select>
+
+              <!-- Dropdown Semester -->
               <select id="adminSemFilter" class="form-control" style="width: auto; padding: 8px 12px;" onchange="renderAdminTable()">
                 <option value="">Semua Semester</option>
                 <option value="I">I</option><option value="II">II</option><option value="III">III</option>
               </select>
+
             </div>
+          </div>
+          <div class="card-body">
             <div class="table-responsive">
               <table>
                 <thead>
                   <tr>
-                    <th>Pensyarah</th>
+                    <th>Pensyarah / Jabatan</th>
                     <th>Folio</th>
                     <th>Tahun / Sem</th>
                     <th>Maklumat</th>
@@ -679,12 +709,22 @@ async function loadAdminData() {
     lecturersList = resL.lecturers || [];
     adminRecords = resR.records || [];
     
-    $('adminLecturerSelect').innerHTML = '<option value="">-- Semua Pensyarah --</option>' + 
-      lecturersList.map(l => `<option value="${esc(l.Email)}">${esc(l.NamaPenuh)}</option>`).join('');
+    updateAdminLecturerList(); // Isi dropdown nama pensyarah
     
     const years = [...new Set(adminRecords.map(r => r.Tahun).filter(Boolean))].sort().reverse();
     $('adminYearFilter').innerHTML = '<option value="">Semua Tahun</option>' + years.map(y => `<option>${esc(y)}</option>`).join('');
   } catch(e) { console.error(e); }
+}
+
+function updateAdminLecturerList() {
+  const selectedDept = $('adminDeptFilter').value;
+  let filteredLecturers = lecturersList;
+  if(selectedDept) {
+    filteredLecturers = lecturersList.filter(l => l.Jabatan === selectedDept);
+  }
+  $('adminLecturerSelect').innerHTML = '<option value="">-- Semua Pensyarah --</option>' + 
+    filteredLecturers.map(l => `<option value="${esc(l.Email)}">${esc(l.NamaPenuh)}</option>`).join('');
+  renderAdminTable();
 }
 
 /* ============ NAVIGASI ============ */
@@ -740,18 +780,39 @@ function render() {
 }
 
 function renderAdminTable() {
+  const dept = $('adminDeptFilter').value;
   const lec = $('adminLecturerSelect').value;
   const year = $('adminYearFilter').value;
   const sem = $('adminSemFilter').value;
 
-  const list = adminRecords.filter(r => (!lec || r.OwnerEmail === lec) && (!year || String(r.Tahun) === year) && (!sem || String(r.Semester) === sem));
+  const list = adminRecords.filter(r => {
+    // Tapis ikut Jabatan (jika dipilih)
+    if (dept) {
+      const lecturer = lecturersList.find(l => l.Email === r.OwnerEmail);
+      if (!lecturer || lecturer.Jabatan !== dept) return false;
+    }
+    // Tapis ikut Pensyarah (jika dipilih)
+    if (lec && r.OwnerEmail !== lec) return false;
+    
+    if (year && String(r.Tahun) !== year) return false;
+    if (sem && String(r.Semester) !== sem) return false;
+    
+    return true;
+  });
+
   $('adminEmpty').classList.toggle('hidden', list.length > 0);
 
   $('adminRecordsBody').innerHTML = list.map(r => {
     const lect = lecturersList.find(l => l.Email === r.OwnerEmail);
+    const lectName = lect ? lect.NamaPenuh : r.OwnerEmail;
+    const lectDept = lect ? lect.Jabatan : '-';
+    
     return `
       <tr>
-        <td><div class="title-main">${esc(lect ? lect.NamaPenuh : r.OwnerEmail)}</div></td>
+        <td>
+          <div class="title-main">${esc(lectName)}</div>
+          <div class="sub-text">${esc(lectDept)}</div>
+        </td>
         <td><span class="badge badge-primary">${r.Section === 'PROFIL' ? 'Pensyarah' : 'Kursus'}</span></td>
         <td>${esc(r.Tahun)} / Sem ${esc(r.Semester||'-')}</td>
         <td><div class="title-main">${esc(r.Kategori)}</div><div class="sub-text">${esc(r.Tajuk)}</div></td>
